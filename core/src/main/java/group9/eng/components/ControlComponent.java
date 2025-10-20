@@ -7,10 +7,17 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 import group9.eng.Entity;
 
+/**
+ * When added to an Entity, allows it to be moved around using the WASD keys.
+ */
 public class ControlComponent extends Component {
     private Body body;
     private float speed;
 
+    /**
+     * Creates a new ControlComponent.
+     * @param speed The speed that the Entity will move when the WASD keys are pressed.
+     */
     public ControlComponent(float speed) {
         this.speed = speed;
     }

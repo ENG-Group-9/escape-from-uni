@@ -5,6 +5,9 @@ import com.badlogic.gdx.physics.box2d.Body;
 
 import group9.eng.Entity;
 
+/**
+ * A Component for testing, randomly moves an Entity around.
+ */
 public class JiggleComponent extends Component {
     private Body body;
     private float speed;

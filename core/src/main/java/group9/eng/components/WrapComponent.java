@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 
 import group9.eng.Entity;
 
+/**
+ * A Component for testing, ensures an Entity wraps around the screen.
+ */
 public class WrapComponent extends Component {
     private BodyComponent bodyComponent;
     private float radius;

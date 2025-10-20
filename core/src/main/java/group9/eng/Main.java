@@ -14,6 +14,9 @@ import group9.eng.components.ControlComponent;
 import group9.eng.components.JiggleComponent;
 import group9.eng.components.WrapComponent;
 
+/**
+ * The main game class, contains everything.
+ */
 public class Main extends ApplicationAdapter {
     private World physicsWorld;
     private Box2DDebugRenderer hitboxDebugRenderer;
@@ -21,7 +24,7 @@ public class Main extends ApplicationAdapter {
     private EntityManager entityManager;
 
     private Viewport viewport;
-
+    
     @Override
     public void create() {
         physicsWorld = new World(new Vector2(0, 0), true);
@@ -54,7 +57,7 @@ public class Main extends ApplicationAdapter {
         update();
         draw();
     }
-
+    
     private void update() {
         physicsWorld.step(Gdx.graphics.getDeltaTime(), 6, 2);
         entityManager.update();
