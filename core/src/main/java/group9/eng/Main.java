@@ -6,7 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import group9.eng.components.BodyComponent;
@@ -24,7 +30,13 @@ public class Main extends ApplicationAdapter {
     private EntityManager entityManager;
 
     private Viewport viewport;
-    
+
+     private Stage uiStage;
+    private Skin skin;
+    private Label timerLabel;
+
+    private TimeTracker timeTracker; 
+
     @Override
     public void create() {
         physicsWorld = new World(new Vector2(0, 0), true);
@@ -50,6 +62,20 @@ public class Main extends ApplicationAdapter {
                 new WrapComponent()
             );
         }
+
+        timeTracker = new TimeTracker(300f);
+
+        uiStage = new Stage(new ScreenViewport());
+        Gdx.input.setInputProcessor(uiStage);
+        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Table table = new Table();
+        table.setFillParent(true);
+        uiStage.addActor(table);
+        timerLabel = new Label("05:00", skin);
+        timerLabel.setFontScale(2);
+        table.add(timerLabel).align(Align.topLeft).pad(10);
+        table.row();
+        table.add().expand();
     }
 
     @Override
@@ -57,9 +83,21 @@ public class Main extends ApplicationAdapter {
         update();
         draw();
     }
-    
+
     private void update() {
-        physicsWorld.step(Gdx.graphics.getDeltaTime(), 6, 2);
+        float delta = Gdx.graphics.getDeltaTime();
+
+        timeTracker.update(delta);
+        String formattedTime = timeTracker.getFormattedTime();
+
+        timerLabel.setText(formattedTime);
+
+        if (timeTracker.isTimeUp()) {
+            // TODO: Add game over logic here
+        }
+
+        uiStage.act(delta);
+        physicsWorld.step(delta, 6, 2);
         entityManager.update();
     }
 
@@ -68,17 +106,24 @@ public class Main extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         viewport.apply();
-
         hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
+
+        uiStage.getViewport().apply();
+        uiStage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height, true);
+        uiStage.getViewport().update(width, height, true);
     }
 
     @Override
     public void dispose() {
         physicsWorld.dispose();
+        hitboxDebugRenderer.dispose();
+        skin.dispose();
+        uiStage.dispose();
     }
 }
+
