@@ -21,7 +21,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
-import group9.eng.components.JiggleComponent;
 
 /**
  * The main game class.
@@ -91,6 +90,8 @@ public class GameManager extends ApplicationAdapter {
                     new ControlComponent(500)
             );
             camera.setTarget(player);
+            
+            /*
             for (int i = 0; i < 50; i++) {
                 entityManager.createEntity(
                     new BodyComponent(
@@ -102,6 +103,7 @@ public class GameManager extends ApplicationAdapter {
                     new JiggleComponent(500)
                 );
             }
+            */
             // ----------------------
 
             timeTracker = new TimeTracker(300f);
