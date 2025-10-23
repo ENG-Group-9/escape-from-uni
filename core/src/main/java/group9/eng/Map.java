@@ -45,7 +45,7 @@ public class Map {
     }
 
     private void create_collision_shapes() {
-        TiledMapTileLayer layer = (TiledMapTileLayer) mapData.getLayers().get(0);
+        TiledMapTileLayer layer = (TiledMapTileLayer) mapData.getLayers().get(1);
         for (int x = 0; x < layer.getWidth(); x++) {
             for (int y = 0; y < layer.getHeight(); y++) {
                 TiledMapTileLayer.Cell cell = layer.getCell(x, y);
