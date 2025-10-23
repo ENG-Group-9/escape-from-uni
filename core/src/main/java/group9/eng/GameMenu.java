@@ -18,16 +18,16 @@ public class GameMenu {
     private final Table pauseMenuTable;
     private final Label pauseLabel;
     private final TextButton resumeButton;
-    private final Main mainGame;
+    private final GameManager mainGame;
     private final Stage stage;
 
     /**
      * Constructor for the GameMenu.
      * @param skin The Skin to use for UI elements.
      * @param stage The main UI stage to add the menu table to.
-     * @param mainGame A reference to the Main class to call back to.
+     * @param mainGame A reference to the GameManager class to call back to.
      */
-    public GameMenu(Skin skin, Stage stage, Main mainGame) {
+    public GameMenu(Skin skin, Stage stage, GameManager mainGame) {
         this.mainGame = mainGame;
         this.stage = stage;
 
