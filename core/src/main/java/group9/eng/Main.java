@@ -19,7 +19,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
 import group9.eng.components.JiggleComponent;
-import group9.eng.components.WrapComponent;
 
 /**
  * The main game class, acting as GameManager for now.
@@ -29,6 +28,10 @@ public class Main extends ApplicationAdapter {
     private Box2DDebugRenderer hitboxDebugRenderer;
     private EntityManager entityManager;
     private Viewport viewport;
+    private Camera camera;
+    private Map map;
+
+    private Entity player;
 
     // UI Variables
     private Stage uiStage;
@@ -46,25 +49,26 @@ public class Main extends ApplicationAdapter {
     public void create() {
         physicsWorld = new World(new Vector2(0, 0), true);
         hitboxDebugRenderer = new Box2DDebugRenderer();
-        viewport = new FitViewport(100, 100);
+        viewport = new FitViewport(200, 200);
+        camera = new Camera(viewport);
         entityManager = new EntityManager();
+        map = new Map(physicsWorld, viewport);
 
         // --- Entity Creation ---
-        entityManager.createEntity(
+        player = entityManager.createEntity(
                 new BodyComponent(physicsWorld, 50, 50, 5),
-                new ControlComponent(500),
-                new WrapComponent()
+                new ControlComponent(500)
         );
+        camera.setTarget(player);
         for (int i = 0; i < 50; i++) {
             entityManager.createEntity(
                 new BodyComponent(
                     physicsWorld,
-                    (float)Math.random() * 100,
-                    (float)Math.random() * 100,
+                    (float)Math.random() * map.getWidth(),
+                    (float)Math.random() * map.getHeight(),
                     (float)Math.random() * 2 + 1
                 ),
-                new JiggleComponent(500),
-                new WrapComponent()
+                new JiggleComponent(500)
             );
         }
         // ----------------------
@@ -116,6 +120,8 @@ public class Main extends ApplicationAdapter {
             }
         }
 
+        camera.update();
+
         timerLabel.setText(timeTracker.getFormattedTime());
         uiStage.act(delta);
     }
@@ -126,6 +132,7 @@ public class Main extends ApplicationAdapter {
 
         // --- Draw Game World ---
         viewport.apply();
+        map.draw();
         hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
 
         // --- Draw UI ---
