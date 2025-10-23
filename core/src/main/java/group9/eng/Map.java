@@ -1,5 +1,7 @@
 package group9.eng;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
@@ -10,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -51,28 +54,50 @@ public class Map {
                 MapObjects cellObjects = cell.getTile().getObjects();
                 if (cellObjects.getCount() != 1) continue;
 
-                MapObject mapObject = cellObjects.get(0);
+                BodyDef bodyDef = new BodyDef();
+                bodyDef.type = BodyDef.BodyType.StaticBody;
+                bodyDef.position.set(x * tileSize, y * tileSize);
+                Body body = physicsWorld.createBody(bodyDef);
 
-                if (mapObject instanceof PolygonMapObject) {
-                    PolygonMapObject polygonMapObject = (PolygonMapObject) mapObject;
-                    Polygon polygon = polygonMapObject.getPolygon();
+                for (MapObject mapObject: cellObjects) {
+                    if (mapObject instanceof PolygonMapObject) {
+                        PolygonMapObject polygonMapObject = (PolygonMapObject) mapObject;
+                        Polygon polygon = polygonMapObject.getPolygon();
 
-                    polygon.setOrigin(tileSize * 0.5f, tileSize * -0.5f);
+                        polygon.setOrigin(tileSize * 0.5f, tileSize * 0.5f);
 
-                    polygon.setScale(
-                        cell.getFlipHorizontally() ? -1 : 1,
-                        cell.getFlipVertically()   ? -1 : 1
-                    );
-                    
-                    
-                    BodyDef bodyDef = new BodyDef();
-                    bodyDef.type = BodyDef.BodyType.StaticBody;
-                    bodyDef.position.set(x * tileSize + polygon.getX(), (y - 1) * tileSize + polygon.getY());
-                    Body body = physicsWorld.createBody(bodyDef);
-                    PolygonShape polygonShape = new PolygonShape();
-                    polygonShape.set(polygon.getTransformedVertices());
-                    body.createFixture(polygonShape, 0.0f);
-                    polygonShape.dispose();
+                        System.out.println();
+
+                        float[] floatVertices = polygon.getVertices();
+                        ArrayList<Vector2> vertices = new ArrayList<Vector2>();
+                        for (int i = 0; i < floatVertices.length; i += 2) {
+                            Vector2 v = new Vector2(floatVertices[i], floatVertices[i+1]);
+                            v.add(
+                                polygon.getX(),
+                                polygon.getY()
+                            );
+                            vertices.add(v);
+                        }
+                        polygon.setPosition(0, 0);
+
+                        System.out.println(vertices);
+
+                        for (int i = 0; i < vertices.size(); i++) {
+                            Vector2 v = vertices.get(i);
+                            floatVertices[i*2] = v.x;
+                            floatVertices[i*2+1] = v.y;
+                        }
+
+                        polygon.setScale(
+                            cell.getFlipHorizontally() ? -1 : 1,
+                            cell.getFlipVertically()   ? -1 : 1
+                        );
+                        
+                        PolygonShape polygonShape = new PolygonShape();
+                        polygonShape.set(polygon.getTransformedVertices());
+                        body.createFixture(polygonShape, 0.0f);
+                        polygonShape.dispose();
+                    }
                 }
             }
         }
