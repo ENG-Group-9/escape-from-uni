@@ -1,5 +1,6 @@
 package group9.eng;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -18,6 +19,7 @@ public class GameMenu {
     private final Table pauseMenuTable;
     private final Label pauseLabel;
     private final TextButton resumeButton;
+    private final TextButton quitButton; // Added
     private final GameManager mainGame;
     private final Stage stage;
 
@@ -38,22 +40,38 @@ public class GameMenu {
 
         // Create the "PAUSED" label
         pauseLabel = new Label("PAUSED", skin);
-        pauseLabel.setFontScale(3);
+        pauseLabel.setFontScale(4); // Changed from 3 to 4
         pauseLabel.setAlignment(Align.center);
 
         // Create the Resume Button
         resumeButton = new TextButton("Resume", skin);
+        resumeButton.getLabel().setFontScale(2.0f); // Added font scale
 
-        // Add elements to the table
-        pauseMenuTable.add(pauseLabel).center().pad(40); // Add padding around label
-        pauseMenuTable.row(); // Move to next row
-        pauseMenuTable.add(resumeButton).center().size(200, 50).pad(10).padBottom(30);
+        // Create the Quit Button
+        quitButton = new TextButton("Quit", skin);
+        quitButton.getLabel().setFontScale(2.0f); // Added font scale
+
+        // Add elements to the table (Layout updated from GameMenu2)
+        pauseMenuTable.add(pauseLabel).center().padTop(80).padBottom(50).padLeft(100).padRight(100);
+        pauseMenuTable.row();
+        pauseMenuTable.add(resumeButton).center().size(350, 80).pad(25);
+        pauseMenuTable.row();
+        pauseMenuTable.add(quitButton).center().size(350, 80).pad(25).padBottom(60);
+
 
         resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 // Tell the Main game class to resume
                 mainGame.resumeGame();
+            }
+        });
+
+        // Added listener for Quit Button
+        quitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
             }
         });
 
@@ -93,4 +111,3 @@ public class GameMenu {
         return pauseMenuTable.isVisible();
     }
 }
-

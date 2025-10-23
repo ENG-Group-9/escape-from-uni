@@ -62,4 +62,12 @@ public class TimeTracker {
     public boolean isTimeUp() {
         return timeRemaining <= 0;
     }
+
+    /**
+     * Gets the remaining time in seconds.
+     * @return The raw float value of the time remaining.
+     */
+    public float getTimeRemaining() {
+        return timeRemaining;
+    }
 }
