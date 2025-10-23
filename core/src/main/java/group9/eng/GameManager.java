@@ -21,9 +21,9 @@ import group9.eng.components.ControlComponent;
 import group9.eng.components.JiggleComponent;
 
 /**
- * The main game class, acting as GameManager for now.
+ * The main game class.
  */
-public class Main extends ApplicationAdapter {
+public class GameManager extends ApplicationAdapter {
     private World physicsWorld;
     private Box2DDebugRenderer hitboxDebugRenderer;
     private EntityManager entityManager;
