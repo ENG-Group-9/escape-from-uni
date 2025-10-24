@@ -242,11 +242,9 @@ public class GameManager extends ApplicationAdapter {
             if (isPaused) {
                 if (timeTracker != null) timeTracker.pause();
                 if (gameMenu != null) gameMenu.displayPauseMenu();
-                System.out.println("Game Paused");
             } else {
                 if (timeTracker != null) timeTracker.resume();
                 if (gameMenu != null) gameMenu.hidePauseMenu();
-                System.out.println("Game Resumed");
             }
     }
 
