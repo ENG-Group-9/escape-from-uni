@@ -21,6 +21,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
+import group9.eng.components.SpriteComponent;
 
 /**
  * The main game class.
@@ -86,8 +87,9 @@ public class GameManager extends ApplicationAdapter {
 
             // --- Entity Creation ---
             player = entityManager.createEntity(
-                    new BodyComponent(physicsWorld, 50, 50, 5),
-                    new ControlComponent(500)
+                    new BodyComponent(physicsWorld, 50, 50, 4),
+                    new ControlComponent(500),
+                    new SpriteComponent()
             );
             camera.setTarget(player);
             
@@ -218,9 +220,10 @@ public class GameManager extends ApplicationAdapter {
         // --- Draw Game World ---
         if (viewport != null) viewport.apply();
         if (map != null) map.draw();
-        if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
-            hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
-        }
+        //if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
+        //    hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
+        //}
+        if (entityManager != null) entityManager.draw(viewport);
 
         // --- Draw UI ---
         if (uiStage != null) {

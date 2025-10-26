@@ -3,6 +3,8 @@ package group9.eng;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import group9.eng.components.Component;
 
 /**
@@ -38,9 +40,9 @@ public class Entity {
     /**
      * Should be called every frame, calls the draw method of every component used by this Entity.
      */
-    public void draw() {
+    public void draw(SpriteBatch batch) {
         for (Component c: components) {
-            c.draw();
+            c.draw(batch);
         }
     }
     

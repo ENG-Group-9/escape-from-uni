@@ -3,6 +3,9 @@ package group9.eng;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.viewport.Viewport;
+
 import group9.eng.components.Component;
 
 /**
@@ -10,12 +13,14 @@ import group9.eng.components.Component;
  */
 public class EntityManager {
     private List<Entity> entities;
+    private SpriteBatch entityBatch;
 
     /**
      * Initialises the entity manager, creating a list to store all of the entities.
      */
     public EntityManager() {
-        this.entities = new ArrayList<Entity>();
+        entities = new ArrayList<Entity>();
+        entityBatch = new SpriteBatch();
     }
 
     /**
@@ -42,9 +47,12 @@ public class EntityManager {
     /**
      * Should be called every frame, calls the draw method of all entities.
      */
-    public void draw() {
+    public void draw(Viewport viewport) {
+        entityBatch.setProjectionMatrix(viewport.getCamera().combined);
+        entityBatch.begin();
         for (Entity e: entities) {
-            e.draw();
+            e.draw(entityBatch);
         }
+        entityBatch.end();
     }
 }

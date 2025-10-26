@@ -1,5 +1,7 @@
 package group9.eng.components;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import group9.eng.Entity;
 
 /**
@@ -20,7 +22,7 @@ public class Component {
      * Should be called every frame, anything that results in drawing to the screen should be
      * contained within this method.
      */
-    public void draw() {}
+    public void draw(SpriteBatch batch) {}
 
     /**
      * Gives this Component a reference to the Entity it is contained within. Should be called as
