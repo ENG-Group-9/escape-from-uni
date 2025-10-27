@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
-import group9.eng.components.SpriteComponent;
+import group9.eng.components.AnimationComponent;
 
 /**
  * The main game class.
@@ -87,9 +87,23 @@ public class GameManager extends ApplicationAdapter {
 
             // --- Entity Creation ---
             player = entityManager.createEntity(
-                    new BodyComponent(physicsWorld, 50, 50, 4),
-                    new ControlComponent(500),
-                    new SpriteComponent()
+                new BodyComponent(physicsWorld, 50, 50, 4),
+                new ControlComponent(500),
+                new AnimationComponent("dummy.png", 16, 16)
+                    .add_animation("idle", new Animation(
+                        0.0f,
+                        new int[] {9},
+                        new int[] {3},
+                        new int[] {0},
+                        new int[] {6}
+                    ))
+                    .add_animation("walk", new Animation(
+                        10.0f,
+                        new int[] {10, 9, 11, 9},
+                        new int[] {4, 3, 5, 3},
+                        new int[] {1, 0, 2, 0},
+                        new int[] {7, 6, 8, 6}
+                    ))
             );
             camera.setTarget(player);
             

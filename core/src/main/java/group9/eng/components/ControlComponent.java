@@ -13,6 +13,7 @@ import group9.eng.Entity;
 public class ControlComponent extends Component {
     private Body body;
     private float speed;
+    private AnimationComponent animationComponent;
 
     /**
      * Creates a new ControlComponent.
@@ -26,16 +27,30 @@ public class ControlComponent extends Component {
     public void setEntity(Entity entity) {
         super.setEntity(entity);
         body = ((BodyComponent) entity.getComponent(BodyComponent.class)).getBody();
+
+        try {
+            animationComponent = (AnimationComponent) entity.getComponent(AnimationComponent.class);
+        }
+        catch (RuntimeException e) {}
     }
 
     @Override
     public void update() {
-        body.applyForceToCenter(
-            new Vector2(
-                (Gdx.input.isKeyPressed(Keys.D) ? 1 : 0) - (Gdx.input.isKeyPressed(Keys.A) ? 1 : 0),
-                (Gdx.input.isKeyPressed(Keys.W) ? 1 : 0) - (Gdx.input.isKeyPressed(Keys.S) ? 1 : 0)
-            ).nor().scl(speed * body.getMass()),
-            true
-        );
+        Vector2 v = new Vector2(
+            (Gdx.input.isKeyPressed(Keys.D) ? 1 : 0) - (Gdx.input.isKeyPressed(Keys.A) ? 1 : 0),
+            (Gdx.input.isKeyPressed(Keys.W) ? 1 : 0) - (Gdx.input.isKeyPressed(Keys.S) ? 1 : 0)
+        ).nor().scl(speed * body.getMass());
+
+        body.applyForceToCenter(v, true);
+
+        if (animationComponent != null) {
+            if (v.isZero()) {
+                animationComponent.setAnimation("idle");
+            }
+            else {
+                animationComponent.setAnimation("walk");
+                animationComponent.setDirection(v);
+            }
+        }
     }
 }
