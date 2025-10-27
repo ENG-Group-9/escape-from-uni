@@ -40,6 +40,8 @@ public class GameManager extends ApplicationAdapter {
     private Texture splashTexture;
     private OrthographicCamera splashCam;
 
+    private Texture csBuildingTexture;
+
     // Game World Variables
     private World physicsWorld;
     private Box2DDebugRenderer hitboxDebugRenderer;
@@ -54,10 +56,13 @@ public class GameManager extends ApplicationAdapter {
     private Stage uiStage;
     private Skin skin;
     private Label timerLabel;
+    private EventDialogue eventDialogue;
 
     // Logic Managers
     private TimeTracker timeTracker;
     private GameMenu gameMenu;
+    private TimeTable timeTable;
+    private EventManager eventManager;
 
     // Game State
     private boolean isPaused = false;
@@ -114,6 +119,13 @@ public class GameManager extends ApplicationAdapter {
             uiStage = new Stage(new ScreenViewport()); // UI uses screen coordinates
             Gdx.input.setInputProcessor(uiStage);
             skin = new Skin(Gdx.files.internal("uiskin.json"));
+            csBuildingTexture = new Texture(Gdx.files.internal("ComputerSciencePixel.png"));
+
+            // Event system setup
+            timeTable = new TimeTable();
+            eventManager = new EventManager(map);
+            eventDialogue = new EventDialogue(skin, uiStage);
+            eventManager.setEventDialogue(eventDialogue);
 
             // Create and configure the root table
             Table table = new Table();
@@ -204,6 +216,18 @@ public class GameManager extends ApplicationAdapter {
             }
             if (physicsWorld != null) physicsWorld.step(delta, 6, 2);
             if (entityManager != null) entityManager.update();
+
+            // Event system updates
+            if (eventManager != null && timeTable != null)  {
+                Vector2 playerPos = ((BodyComponent)player.getComponent(BodyComponent.class)).getPosition();
+
+                eventManager.update(playerPos, timeTable);
+
+                if (!timeTable.hasTimeTable() && eventManager.checkCSBuilding(playerPos))   {
+                    timeTable.foundTimeTable();
+                    eventDialogue.show("Well done, you have collected a new timetable!");
+                }
+            }
         }
 
         if (camera != null) camera.update();
@@ -223,6 +247,18 @@ public class GameManager extends ApplicationAdapter {
         //if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
         //    hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
         //}
+
+        // Draw CS building sprite
+        float csX = eventManager.getCsBuildingX();
+        float csY = eventManager.getCsBuildingY();
+        float csW = eventManager.getCsBuildingWidth();
+        float csH = eventManager.getCsBuildingHeight();
+
+        splashBatch.setProjectionMatrix(viewport.getCamera().combined);
+        splashBatch.begin();
+        splashBatch.draw(csBuildingTexture, csX, csY, csW, csH);
+        splashBatch.end();
+
         if (entityManager != null) entityManager.draw(viewport);
 
         // --- Draw UI ---
@@ -270,6 +306,7 @@ public class GameManager extends ApplicationAdapter {
     public void dispose() {
         if (splashBatch != null) splashBatch.dispose();
         if (splashTexture != null) splashTexture.dispose();
+        if (csBuildingTexture != null) csBuildingTexture.dispose();
 
         if (gameInitialized) {
             if (physicsWorld != null) physicsWorld.dispose();
