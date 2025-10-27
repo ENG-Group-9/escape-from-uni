@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="8" tileheight="8" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="8" tileheight="8" infinite="0" nextlayerid="4" nextobjectid="2">
  <tileset firstgid="1" source="tileset.tsx"/>
- <layer id="2" name="Tile Layer 2" width="20" height="20">
+ <layer id="2" name="floor" width="20" height="20">
   <data encoding="csv">
 97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,
 97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,
@@ -25,7 +25,7 @@
 97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97,97
 </data>
  </layer>
- <layer id="1" name="Tile Layer 1" width="20" height="20">
+ <layer id="1" name="walls" width="20" height="20">
   <data encoding="csv">
 3221225476,1073741827,1073741827,1073741827,1073741828,3221225476,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741828,
 2147483713,36,36,36,65,2147483713,36,36,36,36,36,36,36,36,36,36,36,36,36,65,
@@ -49,4 +49,12 @@
 2147483652,3,3,3,4,2147483652,3,3,3,4,2147483652,3,3,3,3,3,3,3,3,4
 </data>
  </layer>
+ <objectgroup id="3" name="eventareas">
+  <object id="1" x="88" y="104">
+   <properties>
+    <property name="eventid" type="int" value="0"/>
+   </properties>
+   <polygon points="0,0 0,48 64,48 64,-24 24,-24"/>
+  </object>
+ </objectgroup>
 </map>

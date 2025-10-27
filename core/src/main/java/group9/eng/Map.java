@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -42,6 +43,7 @@ public class Map {
         height = mapProperties.get("height", Integer.class) * tileSize;
 
         create_collision_shapes();
+        create_event_areas();
     }
 
     /**
@@ -123,6 +125,28 @@ public class Map {
                     }
                 }
             }
+        }
+    }
+
+    private void create_event_areas() {
+        MapObjects objects = mapData.getLayers().get(2).getObjects();
+
+        for (MapObject object: objects) {
+            PolygonMapObject polygonMapObject = (PolygonMapObject) object;
+            Polygon polygon = polygonMapObject.getPolygon();
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.type = BodyDef.BodyType.StaticBody;
+            Body body = physicsWorld.createBody(bodyDef);
+            
+            PolygonShape polygonShape = new PolygonShape();
+            polygonShape.set(polygon.getTransformedVertices());
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = polygonShape;
+            fixtureDef.isSensor = true;
+            body.createFixture(fixtureDef);
+            polygonShape.dispose();
+
+            body.setUserData(new Event((int) object.getProperties().get("eventid")));
         }
     }
 

@@ -6,6 +6,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.World;
 
+import group9.eng.Entity;
+
 /**
  * When added to an Entity, gives it a circular collision shape.
  */
@@ -32,6 +34,12 @@ public class BodyComponent extends Component {
         body.createFixture(circle, 0.01f);
         body.setLinearDamping(10f);
         body.setFixedRotation(true);
+    }
+
+    @Override
+    public void setEntity(Entity entity) {
+        super.setEntity(entity);
+        body.setUserData(entity);
     }
 
     /**

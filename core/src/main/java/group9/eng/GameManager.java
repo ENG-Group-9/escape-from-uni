@@ -47,6 +47,7 @@ public class GameManager extends ApplicationAdapter {
     private Viewport viewport;
     private Camera camera;
     private Map map;
+    private EventManager eventManager;
 
     private Entity player;
 
@@ -83,6 +84,7 @@ public class GameManager extends ApplicationAdapter {
             viewport = new ExtendViewport(200, 200);
             camera = new Camera(viewport);
             entityManager = new EntityManager();
+            eventManager = new EventManager(physicsWorld);
             map = new Map(physicsWorld, viewport);
 
             // --- Entity Creation ---
@@ -218,6 +220,7 @@ public class GameManager extends ApplicationAdapter {
             }
             if (physicsWorld != null) physicsWorld.step(delta, 6, 2);
             if (entityManager != null) entityManager.update();
+            if (eventManager != null) eventManager.update();
         }
 
         if (camera != null) camera.update();
@@ -234,9 +237,9 @@ public class GameManager extends ApplicationAdapter {
         // --- Draw Game World ---
         if (viewport != null) viewport.apply();
         if (map != null) map.draw();
-        //if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
-        //    hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
-        //}
+        if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
+            hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
+        }
         if (entityManager != null) entityManager.draw(viewport);
 
         // --- Draw UI ---
