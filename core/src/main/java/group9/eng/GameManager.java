@@ -49,6 +49,7 @@ public class GameManager extends ApplicationAdapter {
     private Viewport viewport;
     private Camera camera;
     private Map map;
+    private EventManager eventManager;
 
     private Entity player;
 
@@ -62,7 +63,6 @@ public class GameManager extends ApplicationAdapter {
     private TimeTracker timeTracker;
     private GameMenu gameMenu;
     private TimeTable timeTable;
-    private EventManager eventManager;
 
     // Game State
     private boolean isPaused = false;
@@ -88,6 +88,7 @@ public class GameManager extends ApplicationAdapter {
             viewport = new ExtendViewport(200, 200);
             camera = new Camera(viewport);
             entityManager = new EntityManager();
+            // COMMENTED OUT TEMPORARILY - eventManager = new EventManager(physicsWorld);
             map = new Map(physicsWorld, viewport);
 
             // --- Entity Creation ---
@@ -111,7 +112,7 @@ public class GameManager extends ApplicationAdapter {
                     ))
             );
             camera.setTarget(player);
-            
+
             /*
             for (int i = 0; i < 50; i++) {
                 entityManager.createEntity(
@@ -242,6 +243,8 @@ public class GameManager extends ApplicationAdapter {
                     eventDialogue.show("Well done, you have collected a new timetable!");
                 }
             }
+
+            // CODED OUT TEMPORARILY if (eventManager != null) eventManager.update();
         }
 
         if (camera != null) camera.update();
@@ -272,6 +275,10 @@ public class GameManager extends ApplicationAdapter {
         splashBatch.begin();
         splashBatch.draw(csBuildingTexture, csX, csY, csW, csH);
         splashBatch.end();
+
+        if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
+            hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
+        }
 
         if (entityManager != null) entityManager.draw(viewport);
 

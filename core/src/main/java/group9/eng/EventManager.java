@@ -8,11 +8,10 @@ import group9.eng.events.TimeTableEvent;
 
 /**
  * Manages all the games events within the world.
- *
  * Keeps track of any active events, updates them depending on if their active or not,
  * and handles any specific interactions to do with the events.
  */
-public class EventManager   {
+public class EventManager {
     private List<GameEvent> events;
 
     private final float csBuildingWidth;
@@ -40,11 +39,11 @@ public class EventManager   {
     }
 
     /**
-     * Adds a new event to the EventManaegr list.
+     * Adds a new event to the EventManager list.
      *
      * @param event the {@link GameEvent} to add.
      */
-    public void addEvent(GameEvent event)   {
+    public void addEvent(GameEvent event) {
         events.add(event);
     }
 
@@ -65,8 +64,8 @@ public class EventManager   {
      *
      * @param dialogue the {@link EventDialogue} used for the event.
      */
-    public void setEventDialogue(EventDialogue dialogue)  {
-        for (GameEvent event : events)  {
+    public void setEventDialogue(EventDialogue dialogue) {
+        for (GameEvent event : events) {
             event.setEventDialogue(dialogue);
         }
     }
@@ -77,7 +76,7 @@ public class EventManager   {
      * @param playerPos the current position of the player.
      * @return True if the player is within the Computer Science building, false otherwise.
      */
-    public boolean checkCSBuilding(Vector2 playerPos)   {
+    public boolean checkCSBuilding(Vector2 playerPos) {
         return playerInCS(playerPos);
     }
 
@@ -87,21 +86,110 @@ public class EventManager   {
      * @param playerPos the position of the player currently.
      * @return true if the player is in the area of the Computer Science building, false otherwise.
      */
-    private boolean playerInCS(Vector2 playerPos)   {
+    private boolean playerInCS(Vector2 playerPos) {
         float px = playerPos.x;
         float py = playerPos.y;
 
         return px >= csBuildingX && px <= csBuildingX + csBuildingWidth &&
-               py >= csBuildingY && py <= csBuildingY + csBuildingHeight;
+            py >= csBuildingY && py <= csBuildingY + csBuildingHeight;
     }
 
     // getters for external classes
-    /** @return the X coordinate of the Computer Science building's bottom left corner. */
-    public float getCsBuildingX() { return csBuildingX; }
-    /** @return the Y coordinate of the Computer Science building's bottom left corner. */
-    public float getCsBuildingY() { return csBuildingY; }
-    /** @return the height of the Computer Sciences building's area. */
-    public float getCsBuildingHeight() { return csBuildingHeight; }
-    /** @return the width of the Computer Sciences building's area.. */
-    public float getCsBuildingWidth() { return csBuildingWidth; }
+
+    /**
+     * @return the X coordinate of the Computer Science building's bottom left corner.
+     */
+    public float getCsBuildingX() {
+        return csBuildingX;
+    }
+
+    /**
+     * @return the Y coordinate of the Computer Science building's bottom left corner.
+     */
+    public float getCsBuildingY() {
+        return csBuildingY;
+    }
+
+    /**
+     * @return the height of the Computer Sciences building's area.
+     */
+    public float getCsBuildingHeight() {
+        return csBuildingHeight;
+    }
+
+    /**
+     * @return the width of the Computer Sciences building's area.
+     */
+    public float getCsBuildingWidth() {
+        return csBuildingWidth;
+    }
 }
+// COMMENTED OUT TEMPORARILY
+/*
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Manifold;
+import com.badlogic.gdx.physics.box2d.World;
+
+public class EventManager {
+    private World world;
+    private List<Event> activeEvents;
+
+    public EventManager(World world) {
+        this.world = world;
+
+        this.world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                Object a = contact.getFixtureA().getBody().getUserData();
+                Object b = contact.getFixtureB().getBody().getUserData();
+                if (a == null || b == null) return;
+
+                if (a.getClass() == Event.class) {
+                    Object temp = a;
+                    a = b;
+                    b = temp;
+                }
+
+                if (a.getClass() == Entity.class && b.getClass() == Event.class) {
+                    ((Event) b).addEntity((Entity) a);
+                    activeEvents.add((Event) b);
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+                Object a = contact.getFixtureA().getBody().getUserData();
+                Object b = contact.getFixtureB().getBody().getUserData();
+                if (a == null || b == null) return;
+
+                if (a.getClass() == Event.class) {
+                    Object temp = a;
+                    a = b;
+                    b = temp;
+                }
+
+                if (a.getClass() == Entity.class && b.getClass() == Event.class) {
+                    ((Event) b).removeEntity((Entity) a);
+                    activeEvents.remove((Event) b);
+                }
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold oldManifold) {}
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse impulse) {}
+        });
+
+        activeEvents = new ArrayList<Event>();
+    }
+
+    public void update() {
+        for (Event e: activeEvents) {
+            e.update();
+        }
+    }
+}
+*/
