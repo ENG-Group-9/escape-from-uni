@@ -3,10 +3,13 @@ package group9.eng;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -29,11 +32,11 @@ import group9.eng.components.ControlComponent;
 public class GameManager extends ApplicationAdapter {
 
     private enum GameState {
-        SPLASH, GAME
+        SPLASH, FADING_OUT, GAME, FADING_IN
     }
 
     private GameState currentState = GameState.SPLASH;
-    private boolean gameInitialized = false;
+    private boolean gameInitialised = false;
 
     // Splash Screen Variables
     private SpriteBatch splashBatch;
@@ -67,22 +70,36 @@ public class GameManager extends ApplicationAdapter {
     // Game State
     private boolean isPaused = false;
 
+    // Fade Transition Variables
+    private float fadeDuration = 0.8f;
+    private float fadeTimer = 0.0f;
+    private float fadeAlpha = 1.0f;
+    private SpriteBatch fadeBatch;
+    private Texture blackPixel;
+
     @Override
     public void create() {
-        // Initialize Splash Screen components
+        // Initialise Splash Screen components
         splashBatch = new SpriteBatch();
         splashTexture = new Texture(Gdx.files.internal("splash-screen.png"));
         splashTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         splashCam = new OrthographicCamera();
         splashCam.setToOrtho(false);
+
+        fadeBatch = new SpriteBatch();
+        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.BLACK);
+        pixmap.fill();
+        blackPixel = new Texture(pixmap);
+        pixmap.dispose();
     }
 
     /**
-     * Initializes all game-related objects.
+     * Initialises all game-related objects.
      * This is called once when transitioning from SPLASH to GAME.
      */
-    private void initializeGame() {
-        if (!gameInitialized) {
+    private void initialiseGame() {
+        if (!gameInitialised) {
             physicsWorld = new World(new Vector2(0, 0), true);
             hitboxDebugRenderer = new Box2DDebugRenderer();
             viewport = new ExtendViewport(200, 200);
@@ -157,10 +174,12 @@ public class GameManager extends ApplicationAdapter {
             // Create the GameMenu
             gameMenu = new GameMenu(skin, uiStage, this);
 
-            gameInitialized = true;
+            gameInitialised = true;
             camera.update();
 
             // Ensure viewports are set correctly
+            currentState = GameState.FADING_IN;
+            fadeTimer = 0.0f;
             resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         }
     }
@@ -171,25 +190,61 @@ public class GameManager extends ApplicationAdapter {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        updateBasedOnState(Gdx.graphics.getDeltaTime());
+        drawBasedOnState();
+        drawFadeOverlay();
+    }
+
+    private void updateBasedOnState(float delta) {
         switch (currentState) {
             case SPLASH:
-                updateSplash(Gdx.graphics.getDeltaTime());
+                updateSplash(delta);
+                break;
+            case FADING_OUT:
+                updateFadeOut(delta);
+                break;
+            case GAME:
+            case FADING_IN:
+                if (!gameInitialised) {
+                     initialiseGame();
+                } else {
+                    updateGame(delta);
+                }
+                break;
+        }
+    }
+
+    private void drawBasedOnState() {
+         switch (currentState) {
+            case SPLASH:
+            case FADING_OUT:
                 drawSplash();
                 break;
             case GAME:
-                if (!gameInitialized) {
-                     initializeGame();
-                 }
-                updateGame(Gdx.graphics.getDeltaTime());
-                drawGame();
+            case FADING_IN:
+                if (gameInitialised) {
+                    drawGame();
+                }
                 break;
         }
     }
 
     private void updateSplash(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-             currentState = GameState.GAME;
+             currentState = GameState.FADING_OUT;
+             fadeTimer = 0.0f;
+             fadeAlpha = 1.0f;
          }
+        splashCam.update();
+    }
+
+    private void updateFadeOut(float delta) {
+        fadeTimer += delta;
+        fadeAlpha = Interpolation.fade.apply(1.0f, 0.0f, Math.min(fadeTimer / fadeDuration, 1.0f));
+
+        if (fadeTimer >= fadeDuration) {
+             initialiseGame();
+        }
         splashCam.update();
     }
 
@@ -197,32 +252,48 @@ public class GameManager extends ApplicationAdapter {
          splashCam.update();
          splashBatch.setProjectionMatrix(splashCam.combined);
 
+         Color c = splashBatch.getColor();
+         splashBatch.setColor(c.r, c.g, c.b, fadeAlpha);
+
          splashBatch.begin();
 
          float screenWidth = Gdx.graphics.getWidth();
          float screenHeight = Gdx.graphics.getHeight();
          float textureWidth = splashTexture.getWidth();
          float textureHeight = splashTexture.getHeight();
-
+         
          float scale = Math.min(screenWidth / textureWidth, screenHeight / textureHeight);
          float drawWidth = textureWidth * scale;
          float drawHeight = textureHeight * scale;
          float x = (screenWidth - drawWidth) / 2;
          float y = (screenHeight - drawHeight) / 2;
-
+         
          splashBatch.draw(splashTexture, x, y, drawWidth, drawHeight);
          splashBatch.end();
+
+         splashBatch.setColor(c.r, c.g, c.b, 1f);
      }
 
 
     private void updateGame(float delta) {
-        if (!gameInitialized) return;
+        if (currentState == GameState.FADING_IN) {
+            fadeTimer += delta;
+            fadeAlpha = Interpolation.fade.apply(1.0f, 0.0f, Math.min(fadeTimer / fadeDuration, 1.0f));
+            if (fadeTimer >= fadeDuration) {
+                currentState = GameState.GAME;
+                fadeAlpha = 0.0f;
+                // Force updates and request rendering after state change
+                if (camera != null) camera.update();
+                if (uiStage != null) uiStage.act(delta);
+                Gdx.graphics.requestRendering(); // Explicitly request a new frame render
+            }
+        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
            togglePause();
         }
 
-        if (!isPaused) {
+        if (!isPaused && (currentState == GameState.GAME || currentState == GameState.FADING_IN)) {
              if (timeTracker != null) {
                  timeTracker.update(delta);
                  if (timeTracker.isTimeUp()) {
@@ -247,16 +318,17 @@ public class GameManager extends ApplicationAdapter {
             // CODED OUT TEMPORARILY if (eventManager != null) eventManager.update();
         }
 
-        if (camera != null) camera.update();
+        if (camera != null && !isPaused) camera.update();
 
         if (timerLabel != null && timeTracker != null) {
             timerLabel.setText(timeTracker.getFormattedTime());
         }
+
         if (uiStage != null) uiStage.act(delta);
     }
 
     private void drawGame() {
-        if (!gameInitialized) return;
+        if (!gameInitialised) return;
 
         // --- Draw Game World ---
         if (viewport != null) viewport.apply();
@@ -276,9 +348,10 @@ public class GameManager extends ApplicationAdapter {
         splashBatch.draw(csBuildingTexture, csX, csY, csW, csH);
         splashBatch.end();
 
-        if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
-            hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
-        }
+        // Optional Debug Renderer
+        // if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
+        //     hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
+        // }
 
         if (entityManager != null) entityManager.draw(viewport);
 
@@ -289,6 +362,19 @@ public class GameManager extends ApplicationAdapter {
          }
     }
 
+    private void drawFadeOverlay() {
+        if (currentState == GameState.FADING_IN) {
+            fadeBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            fadeBatch.begin();
+            Color c = fadeBatch.getColor();
+            fadeBatch.setColor(c.r, c.g, c.b, fadeAlpha);
+            fadeBatch.draw(blackPixel, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+            fadeBatch.end();
+            fadeBatch.setColor(c.r, c.g, c.b, 1f);
+        }
+    }
+
+
     public void resumeGame() {
         if (isPaused) {
             togglePause();
@@ -296,7 +382,7 @@ public class GameManager extends ApplicationAdapter {
     }
 
     private void togglePause() {
-        if (!gameInitialized) return;
+        if (!gameInitialised || currentState == GameState.SPLASH || currentState == GameState.FADING_OUT || currentState == GameState.FADING_IN) return;
 
          isPaused = !isPaused;
             if (isPaused) {
@@ -313,7 +399,7 @@ public class GameManager extends ApplicationAdapter {
     public void resize(int width, int height) {
         splashCam.setToOrtho(false, width, height);
 
-        if (currentState == GameState.GAME && gameInitialized) {
+        if ((currentState == GameState.GAME || currentState == GameState.FADING_IN) && gameInitialised) {
             if (viewport != null) viewport.update(width, height, true);
             if (uiStage != null) uiStage.getViewport().update(width, height, true);
 
@@ -328,12 +414,15 @@ public class GameManager extends ApplicationAdapter {
         if (splashBatch != null) splashBatch.dispose();
         if (splashTexture != null) splashTexture.dispose();
         if (csBuildingTexture != null) csBuildingTexture.dispose();
+        if (fadeBatch != null) fadeBatch.dispose();
+        if (blackPixel != null) blackPixel.dispose();
 
-        if (gameInitialized) {
+        if (gameInitialised) {
             if (physicsWorld != null) physicsWorld.dispose();
             if (hitboxDebugRenderer != null) hitboxDebugRenderer.dispose();
             if (skin != null) skin.dispose();
             if (uiStage != null) uiStage.dispose();
+            // Dispose other game assets if necessary
         }
     }
 }

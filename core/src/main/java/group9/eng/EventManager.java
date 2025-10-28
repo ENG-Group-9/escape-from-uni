@@ -21,7 +21,7 @@ public class EventManager {
 
     /**
      * Creates an EventManager for the provided map.
-     * Initializes the Computer Science buildings position and boundaries,
+     * Initialises the Computer Science buildings position and boundaries,
      * and adds any the TimeTableEvent to the list of GameEvents.
      *
      * @param map the map used within the game.
