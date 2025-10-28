@@ -19,9 +19,9 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import group9.eng.components.AnimationComponent;
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
-import group9.eng.components.AnimationComponent;
 
 /**
  * The main game class.
