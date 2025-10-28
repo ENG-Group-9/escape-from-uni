@@ -19,9 +19,13 @@ public class GameMenu {
     private final Table pauseMenuTable;
     private final Label pauseLabel;
     private final TextButton resumeButton;
-    private final TextButton quitButton; // Added
+    private final TextButton quitButton;
     private final GameManager mainGame;
     private final Stage stage;
+    private final Skin skin;
+
+    private final Table eventTrackerTable;
+    private final Label eventTrackerPlaceholderLabel;
 
     /**
      * Constructor for the GameMenu.
@@ -32,7 +36,9 @@ public class GameMenu {
     public GameMenu(Skin skin, Stage stage, GameManager mainGame) {
         this.mainGame = mainGame;
         this.stage = stage;
+        this.skin = skin;
 
+        // --- Pause Menu Setup ---
         pauseMenuTable = new Table();
         pauseMenuTable.setBackground(skin.getDrawable("default-window"));
         pauseMenuTable.setVisible(false);
@@ -40,18 +46,17 @@ public class GameMenu {
 
         // Create the "PAUSED" label
         pauseLabel = new Label("PAUSED", skin);
-        pauseLabel.setFontScale(4); // Changed from 3 to 4
+        pauseLabel.setFontScale(4);
         pauseLabel.setAlignment(Align.center);
 
         // Create the Resume Button
         resumeButton = new TextButton("Resume", skin);
-        resumeButton.getLabel().setFontScale(2.0f); // Added font scale
+        resumeButton.getLabel().setFontScale(2.0f);
 
         // Create the Quit Button
         quitButton = new TextButton("Quit", skin);
-        quitButton.getLabel().setFontScale(2.0f); // Added font scale
+        quitButton.getLabel().setFontScale(2.0f);
 
-        // Add elements to the table (Layout updated from GameMenu2)
         pauseMenuTable.add(pauseLabel).center().padTop(80).padBottom(50).padLeft(100).padRight(100);
         pauseMenuTable.row();
         pauseMenuTable.add(resumeButton).center().size(350, 80).pad(25);
@@ -81,26 +86,57 @@ public class GameMenu {
                 (stage.getWidth() - pauseMenuTable.getWidth()) / 2f,
                 (stage.getHeight() - pauseMenuTable.getHeight()) / 2f
         );
+
+        // --- Event Tracker Placeholder Setup ---
+        eventTrackerTable = new Table();
+        eventTrackerTable.setBackground(skin.getDrawable("default-window")); // Add background
+        eventTrackerTable.setVisible(false); // Initially hidden
+        stage.addActor(eventTrackerTable);
+
+        eventTrackerPlaceholderLabel = new Label("this will be used to track event types", skin);
+        eventTrackerPlaceholderLabel.setFontScale(3f); // Adjust scale as needed
+        eventTrackerPlaceholderLabel.setWrap(true); // Allow wrapping
+
+        eventTrackerTable.add(eventTrackerPlaceholderLabel).pad(15).width(400); // Add padding and set a width
+        eventTrackerTable.pack(); // Pack the table around the label
+
+        // Position event tracker in top right
+        repositionEventTracker();
     }
 
     /**
-     * Makes the pause menu table visible and centers it.
+     * Recalculates and sets the position of the event tracker table to the top right corner.
      */
-    public void displayPauseMenu() {
-        // Recalculate position based on current stage size
+    private void repositionEventTracker() {
+         eventTrackerTable.pack(); // Ensure size is correct based on content
+         eventTrackerTable.setPosition(stage.getWidth() - 10, stage.getHeight() - 10, Align.topRight);
+    }
+
+    /**
+     * Makes the pause menu table and event tracker visible and positions them.
+     */
+    public void displayPauseMenu() { // Removed the List parameter for now
+        // Recalculate pause menu position
+        pauseMenuTable.pack(); 
         pauseMenuTable.setPosition(
                 (stage.getWidth() - pauseMenuTable.getWidth()) / 2f,
                 (stage.getHeight() - pauseMenuTable.getHeight()) / 2f
         );
         pauseMenuTable.setVisible(true);
         pauseMenuTable.toFront();
+
+        // Reposition and display event tracker
+        repositionEventTracker(); // Update position based on current stage size
+        eventTrackerTable.setVisible(true);
+        eventTrackerTable.toFront(); // Ensure it's on top
     }
 
     /**
-     * Hides the pause menu table.
+     * Hides the pause menu table and the event tracker.
      */
     public void hidePauseMenu() {
         pauseMenuTable.setVisible(false);
+        eventTrackerTable.setVisible(false); // Hide tracker too
     }
 
     /**

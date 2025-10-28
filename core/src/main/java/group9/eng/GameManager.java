@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Align; // Ensure Align is imported
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -52,7 +52,7 @@ public class GameManager extends ApplicationAdapter {
     private Viewport viewport;
     private Camera camera;
     private Map map;
-    private EventManager eventManager;
+    private EventManager eventManager; // Keep the field
 
     private Entity player;
 
@@ -105,8 +105,20 @@ public class GameManager extends ApplicationAdapter {
             viewport = new ExtendViewport(200, 200);
             camera = new Camera(viewport);
             entityManager = new EntityManager();
-            // COMMENTED OUT TEMPORARILY - eventManager = new EventManager(physicsWorld);
-            map = new Map(physicsWorld, viewport);
+
+            map = new Map(physicsWorld, viewport); // Needs to be initialised before EventManager if EventManager uses map dimensions
+
+            // --- UI Setup ---
+            uiStage = new Stage(new ScreenViewport()); // UI uses screen coordinates
+            Gdx.input.setInputProcessor(uiStage);
+            skin = new Skin(Gdx.files.internal("uiskin.json"));
+            csBuildingTexture = new Texture(Gdx.files.internal("ComputerSciencePixel.png"));
+
+            // Event system setup (ensure map is initialised first if needed)
+            timeTable = new TimeTable();
+            eventManager = new EventManager(map); // Pass map here
+            eventDialogue = new EventDialogue(skin, uiStage);
+            eventManager.setEventDialogue(eventDialogue); // Set dialogue for events
 
             // --- Entity Creation ---
             player = entityManager.createEntity(
@@ -147,32 +159,20 @@ public class GameManager extends ApplicationAdapter {
 
             timeTracker = new TimeTracker(300f);
 
-            // --- UI Setup ---
-            uiStage = new Stage(new ScreenViewport()); // UI uses screen coordinates
-            Gdx.input.setInputProcessor(uiStage);
-            skin = new Skin(Gdx.files.internal("uiskin.json"));
-            csBuildingTexture = new Texture(Gdx.files.internal("ComputerSciencePixel.png"));
-
-            // Event system setup
-            timeTable = new TimeTable();
-            eventManager = new EventManager(map);
-            eventDialogue = new EventDialogue(skin, uiStage);
-            eventManager.setEventDialogue(eventDialogue);
-
-            // Create and configure the root table
+            // Create and configure the root table for UI
             Table table = new Table();
             table.setFillParent(true); // Make the table fill the stage
             uiStage.addActor(table); // Add the table to the stage
 
             // Timer Label setup using the table
             timerLabel = new Label("05:00", skin);
-            timerLabel.setFontScale(4); // Changed from 2 to 4
+            timerLabel.setFontScale(4);
             table.add(timerLabel).align(Align.topLeft).pad(10);
             table.row();
             table.add().expand(); // Add an expanding cell below the timer to push it up
 
             // Create the GameMenu
-            gameMenu = new GameMenu(skin, uiStage, this);
+            gameMenu = new GameMenu(skin, uiStage, this); // Pass this GameManager instance
 
             gameInitialised = true;
             camera.update();
@@ -207,11 +207,12 @@ public class GameManager extends ApplicationAdapter {
             case FADING_IN:
                 if (!gameInitialised) {
                      initialiseGame();
-                } else {
-                    updateGame(delta);
-                }
+                } // Fall through to updateGame even if just initialised
+                updateGame(delta); // Always update game logic if not splash/fading out
                 break;
         }
+         // Update UI stage regardless of pause state for menu interactions
+        if (uiStage != null) uiStage.act(delta);
     }
 
     private void drawBasedOnState() {
@@ -227,23 +228,29 @@ public class GameManager extends ApplicationAdapter {
                 }
                 break;
         }
+         // Draw UI stage on top of everything else (except fade)
+        if (uiStage != null && gameInitialised) { // Only draw UI if game is initialised
+             uiStage.getViewport().apply(); // Apply UI viewport
+             uiStage.draw();
+         }
     }
 
     private void updateSplash(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
              currentState = GameState.FADING_OUT;
              fadeTimer = 0.0f;
-             fadeAlpha = 1.0f;
+             fadeAlpha = 1.0f; // Start fade from black
          }
         splashCam.update();
     }
 
     private void updateFadeOut(float delta) {
         fadeTimer += delta;
+        // Fade out the splash screen
         fadeAlpha = Interpolation.fade.apply(1.0f, 0.0f, Math.min(fadeTimer / fadeDuration, 1.0f));
 
         if (fadeTimer >= fadeDuration) {
-             initialiseGame();
+             initialiseGame(); // Initialise game components
         }
         splashCam.update();
     }
@@ -261,31 +268,28 @@ public class GameManager extends ApplicationAdapter {
          float screenHeight = Gdx.graphics.getHeight();
          float textureWidth = splashTexture.getWidth();
          float textureHeight = splashTexture.getHeight();
-         
+
          float scale = Math.min(screenWidth / textureWidth, screenHeight / textureHeight);
          float drawWidth = textureWidth * scale;
          float drawHeight = textureHeight * scale;
          float x = (screenWidth - drawWidth) / 2;
          float y = (screenHeight - drawHeight) / 2;
-         
+
          splashBatch.draw(splashTexture, x, y, drawWidth, drawHeight);
          splashBatch.end();
 
-         splashBatch.setColor(c.r, c.g, c.b, 1f);
+         splashBatch.setColor(c.r, c.g, c.b, 1f); 
      }
 
 
     private void updateGame(float delta) {
         if (currentState == GameState.FADING_IN) {
             fadeTimer += delta;
+            // Fade in the game view
             fadeAlpha = Interpolation.fade.apply(1.0f, 0.0f, Math.min(fadeTimer / fadeDuration, 1.0f));
             if (fadeTimer >= fadeDuration) {
                 currentState = GameState.GAME;
-                fadeAlpha = 0.0f;
-                // Force updates and request rendering after state change
-                if (camera != null) camera.update();
-                if (uiStage != null) uiStage.act(delta);
-                Gdx.graphics.requestRendering(); // Explicitly request a new frame render
+                fadeAlpha = 0.0f; // Fully faded in
             }
         }
 
@@ -293,33 +297,39 @@ public class GameManager extends ApplicationAdapter {
            togglePause();
         }
 
+        // Only update game world logic if not paused and game is running or fading in
         if (!isPaused && (currentState == GameState.GAME || currentState == GameState.FADING_IN)) {
              if (timeTracker != null) {
                  timeTracker.update(delta);
                  if (timeTracker.isTimeUp()) {
-                     // TODO: Game over
+                     // TODO: Game over logic
                  }
             }
             if (physicsWorld != null) physicsWorld.step(delta, 6, 2);
             if (entityManager != null) entityManager.update();
 
             // Event system updates
-            if (eventManager != null && timeTable != null)  {
-                Vector2 playerPos = ((BodyComponent)player.getComponent(BodyComponent.class)).getPosition();
+            if (eventManager != null && timeTable != null && player != null)  { // Check player exists
+                BodyComponent playerBody = (BodyComponent)player.getComponent(BodyComponent.class);
+                if (playerBody != null) {
+                    Vector2 playerPos = playerBody.getPosition();
+                    eventManager.update(playerPos, timeTable);
 
-                eventManager.update(playerPos, timeTable);
-
-                if (!timeTable.hasTimeTable() && eventManager.checkCSBuilding(playerPos))   {
-                    timeTable.foundTimeTable();
-                    eventDialogue.show("Well done, you have collected a new timetable!");
+                    // Check for finding timetable at CS building
+                    if (!timeTable.hasTimeTable() && eventManager.checkCSBuilding(playerPos))   {
+                        timeTable.foundTimeTable();
+                        if (eventDialogue != null) { // Check dialogue exists
+                            eventDialogue.show("Well done, you have collected a new timetable!");
+                        }
+                    }
                 }
             }
-
-            // CODED OUT TEMPORARILY if (eventManager != null) eventManager.update();
+            if (camera != null) camera.update(); // Update camera if not paused
         }
 
         if (camera != null && !isPaused) camera.update();
 
+        // Update timer label text
         if (timerLabel != null && timeTracker != null) {
             timerLabel.setText(timeTracker.getFormattedTime());
         }
@@ -331,39 +341,39 @@ public class GameManager extends ApplicationAdapter {
         if (!gameInitialised) return;
 
         // --- Draw Game World ---
-        if (viewport != null) viewport.apply();
+        if (viewport != null) viewport.apply(); // Apply game viewport
         if (map != null) map.draw();
         //if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
         //    hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
         //}
 
         // Draw CS building sprite
-        float csX = eventManager.getCsBuildingX();
-        float csY = eventManager.getCsBuildingY();
-        float csW = eventManager.getCsBuildingWidth();
-        float csH = eventManager.getCsBuildingHeight();
+        if (eventManager != null && csBuildingTexture != null && viewport != null) {
+            float csX = eventManager.getCsBuildingX();
+            float csY = eventManager.getCsBuildingY();
+            float csW = eventManager.getCsBuildingWidth();
+            float csH = eventManager.getCsBuildingHeight();
 
-        splashBatch.setProjectionMatrix(viewport.getCamera().combined);
-        splashBatch.begin();
-        splashBatch.draw(csBuildingTexture, csX, csY, csW, csH);
-        splashBatch.end();
+            splashBatch.setProjectionMatrix(viewport.getCamera().combined);
+            splashBatch.begin();
+            splashBatch.draw(csBuildingTexture, csX, csY, csW, csH);
+            splashBatch.end();
+        }
 
         // Optional Debug Renderer
         // if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
         //     hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
         // }
 
-        if (entityManager != null) entityManager.draw(viewport);
-
-        // --- Draw UI ---
-        if (uiStage != null) {
-            uiStage.getViewport().apply();
-            uiStage.draw();
-         }
+        if (entityManager != null && viewport != null) entityManager.draw(viewport);
     }
 
+    // Draws the black overlay during FADING_IN state
     private void drawFadeOverlay() {
-        if (currentState == GameState.FADING_IN) {
+        if (currentState == GameState.FADING_IN && fadeAlpha > 0.0f) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+
             fadeBatch.getProjectionMatrix().setToOrtho2D(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             fadeBatch.begin();
             Color c = fadeBatch.getColor();
@@ -371,7 +381,8 @@ public class GameManager extends ApplicationAdapter {
             fadeBatch.draw(blackPixel, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
             fadeBatch.end();
             fadeBatch.setColor(c.r, c.g, c.b, 1f);
-        }
+
+            Gdx.gl.glDisable(GL20.GL_BLEND);        }
     }
 
 
@@ -382,12 +393,16 @@ public class GameManager extends ApplicationAdapter {
     }
 
     private void togglePause() {
-        if (!gameInitialised || currentState == GameState.SPLASH || currentState == GameState.FADING_OUT || currentState == GameState.FADING_IN) return;
+        // Allow pausing only when fully in the GAME state
+        if (!gameInitialised || currentState != GameState.GAME) return;
 
          isPaused = !isPaused;
             if (isPaused) {
                 if (timeTracker != null) timeTracker.pause();
-                if (gameMenu != null) gameMenu.displayPauseMenu();
+
+                if (gameMenu != null) {
+                     gameMenu.displayPauseMenu();
+                }
             } else {
                 if (timeTracker != null) timeTracker.resume();
                 if (gameMenu != null) gameMenu.hidePauseMenu();
@@ -397,14 +412,17 @@ public class GameManager extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-        splashCam.setToOrtho(false, width, height);
+        // Update splash camera viewport regardless of state
+        if (splashCam != null) splashCam.setToOrtho(false, width, height);
 
-        if ((currentState == GameState.GAME || currentState == GameState.FADING_IN) && gameInitialised) {
-            if (viewport != null) viewport.update(width, height, true);
-            if (uiStage != null) uiStage.getViewport().update(width, height, true);
+        // Update game and UI viewports only if the game is initialised
+        if (gameInitialised) {
+            if (viewport != null) viewport.update(width, height, true); // Update game world viewport
+            if (uiStage != null) uiStage.getViewport().update(width, height, true); // Update UI viewport
 
-            if (gameMenu != null && gameMenu.isPausedDisplayActive()) {
-                 gameMenu.displayPauseMenu();
+             // If paused when resizing, redisplay menus correctly
+            if (gameMenu != null && isPaused) { // Check isPaused flag
+                 gameMenu.displayPauseMenu(); // Call without arguments to reposition
             }
         }
     }
@@ -422,7 +440,7 @@ public class GameManager extends ApplicationAdapter {
             if (hitboxDebugRenderer != null) hitboxDebugRenderer.dispose();
             if (skin != null) skin.dispose();
             if (uiStage != null) uiStage.dispose();
-            // Dispose other game assets if necessary
+
         }
     }
 }
