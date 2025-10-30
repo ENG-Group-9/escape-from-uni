@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Event {
-    private int id;
-    private List<Entity> entities;
+    private final List<Entity> entities;
 
     public Event(int id) {
-        this.id = id;
-        entities = new ArrayList<Entity>();
+        entities = new ArrayList<>();
     }
 
     public void addEntity(Entity entity) {

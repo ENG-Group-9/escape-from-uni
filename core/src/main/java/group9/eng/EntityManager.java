@@ -12,14 +12,14 @@ import group9.eng.components.Component;
  * Contains entities and allows for them to be created.
  */
 public class EntityManager {
-    private List<Entity> entities;
-    private SpriteBatch entityBatch;
+    private final List<Entity> entities;
+    private final SpriteBatch entityBatch;
 
     /**
      * Initialises the entity manager, creating a list to store all of the entities.
      */
     public EntityManager() {
-        entities = new ArrayList<Entity>();
+        entities = new ArrayList<>();
         entityBatch = new SpriteBatch();
     }
 

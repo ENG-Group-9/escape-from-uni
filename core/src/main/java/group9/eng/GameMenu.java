@@ -23,8 +23,6 @@ public class GameMenu {
     private final TextButton quitButton;
     private final GameManager mainGame;
     private final Stage stage;
-    private final Skin skin;
-
     private final Table eventTrackerTable;
     private final Label eventTrackerPlaceholderLabel;
 
@@ -37,8 +35,6 @@ public class GameMenu {
     public GameMenu(Skin skin, Stage stage, GameManager mainGame) {
         this.mainGame = mainGame;
         this.stage = stage;
-        this.skin = skin;
-
         // --- Pause Menu Setup ---
         pauseMenuTable = new Table();
         pauseMenuTable.setBackground(skin.getDrawable("default-window"));

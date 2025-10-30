@@ -2,7 +2,9 @@ package group9.eng;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.badlogic.gdx.math.Vector2;
+
 import group9.eng.events.GameEvent;
 import group9.eng.events.TimeTableEvent;
 
@@ -11,8 +13,8 @@ import group9.eng.events.TimeTableEvent;
  * Keeps track of any active events, updates them depending on if their active or not,
  * and handles any specific interactions to do with the events.
  */
-public class EventManager {
-    private List<GameEvent> events;
+public final class EventManager {
+    private final List<GameEvent> events;
 
     private final float csBuildingWidth;
     private final float csBuildingHeight;
@@ -27,7 +29,7 @@ public class EventManager {
      * @param map the map used within the game.
      */
     public EventManager(Map map) {
-        events = new ArrayList<GameEvent>();
+        events = new ArrayList<>();
 
         this.csBuildingWidth = 30f; // adjust to change building size
         this.csBuildingHeight = 30f * 64f / 96f; // width divided by the size of the sprite to stay proportionate

@@ -74,7 +74,7 @@ public class GameManager extends ApplicationAdapter {
     private boolean isPaused = false;
 
     // Fade Transition Variables
-    private float fadeDuration = 0.8f;
+    private final float fadeDuration = 0.8f;
     private float fadeTimer = 0.0f;
     private float fadeAlpha = 1.0f;
     private SpriteBatch fadeBatch;
@@ -209,7 +209,7 @@ public class GameManager extends ApplicationAdapter {
     private void updateBasedOnState(float delta) {
         switch (currentState) {
             case SPLASH:
-                updateSplash(delta);
+                updateSplash();
                 break;
             case FADING_OUT:
                 updateFadeOut(delta);
@@ -246,7 +246,7 @@ public class GameManager extends ApplicationAdapter {
          }
     }
 
-    private void updateSplash(float delta) {
+    private void updateSplash() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
              currentState = GameState.FADING_OUT;
              fadeTimer = 0.0f;

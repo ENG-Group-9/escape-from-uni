@@ -1,6 +1,7 @@
 package group9.eng;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -11,17 +12,16 @@ import group9.eng.components.Component;
  * A container for components.
  */
 public class Entity {
-    private List<Component> components;
+    private final List<Component> components;
 
     /**
      * Initialises the Entity using the list of components provided.
      * @param components A list of components used by this Entity.
      */
     public Entity(Component... components) {
-        this.components = new ArrayList<Component>();
-        for (Component c: components) {
-            this.components.add(c);
-        }
+        this.components = new ArrayList<>();
+        Collections.addAll(this.components, components);
+    
         for (Component c: this.components) {
             c.setEntity(this);
         }

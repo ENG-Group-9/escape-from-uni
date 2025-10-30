@@ -21,14 +21,14 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Map {
-    private World physicsWorld;
-    private Viewport viewport;
-    private TiledMap mapData;
-    private OrthogonalTiledMapRenderer mapRenderer;
+    private final World physicsWorld;
+    private final Viewport viewport;
+    private final TiledMap mapData;
+    private final OrthogonalTiledMapRenderer mapRenderer;
 
-    private int tileSize;
-    private int width;
-    private int height;
+    private final int tileSize;
+    private final int width;
+    private final int height;
 
     public Map(World physicsWorld, Viewport viewport) {
         this.physicsWorld = physicsWorld;
@@ -90,7 +90,7 @@ public class Map {
                          * instead of their position relative to the first vertex.
                          */
                         float[] floatVertices = polygon.getVertices();
-                        ArrayList<Vector2> vertices = new ArrayList<Vector2>();
+                        ArrayList<Vector2> vertices = new ArrayList<>();
                         for (int i = 0; i < floatVertices.length; i += 2) {
                             Vector2 v = new Vector2(floatVertices[i], floatVertices[i+1]);
                             v.add(

@@ -11,10 +11,10 @@ import group9.eng.components.BodyComponent;
  * Works by having the camera smoothly transition to the target.
  */
 public class Camera {
-    private Viewport viewport;
+    private final Viewport viewport;
 
-    private Vector3 targetPosVector3;
-    private Vector2 targetPos;
+    private final Vector3 targetPosVector3;
+    private final Vector2 targetPos;
     private BodyComponent targetBodyComponent;
 
     /**

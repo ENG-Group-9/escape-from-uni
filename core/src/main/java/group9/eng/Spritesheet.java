@@ -5,11 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Spritesheet {
-    private Texture texture;
-    private TextureRegion[][] frames;
-    private int width;
-    private int tileWidth;
-    private int tileHeight;
+    private final Texture texture;
+    private final TextureRegion[][] frames;
+    private final int width;
+    private final int tileWidth;
+    private final int tileHeight;
 
     public Spritesheet(String filename, int tileWidth, int tileHeight) {
         this.tileWidth = tileWidth;
