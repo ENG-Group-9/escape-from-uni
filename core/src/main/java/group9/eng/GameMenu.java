@@ -18,6 +18,7 @@ public class GameMenu {
 
     private final Table pauseMenuTable;
     private final Label pauseLabel;
+    private final Label scoreLabel;
     private final TextButton resumeButton;
     private final TextButton quitButton;
     private final GameManager mainGame;
@@ -49,6 +50,11 @@ public class GameMenu {
         pauseLabel.setFontScale(4);
         pauseLabel.setAlignment(Align.center);
 
+        // Create the Score tracker
+        scoreLabel = new Label("Score: 0", skin);
+        scoreLabel.setFontScale(2.0f); // Set font scale
+        scoreLabel.setAlignment(Align.center);
+
         // Create the Resume Button
         resumeButton = new TextButton("Resume", skin);
         resumeButton.getLabel().setFontScale(2.0f);
@@ -57,7 +63,9 @@ public class GameMenu {
         quitButton = new TextButton("Quit", skin);
         quitButton.getLabel().setFontScale(2.0f);
 
-        pauseMenuTable.add(pauseLabel).center().padTop(80).padBottom(50).padLeft(100).padRight(100);
+        pauseMenuTable.add(pauseLabel).center().padTop(80).padBottom(25).padLeft(100).padRight(100);
+        pauseMenuTable.row();
+        pauseMenuTable.add(scoreLabel).center().padBottom(25); // Added the score label
         pauseMenuTable.row();
         pauseMenuTable.add(resumeButton).center().size(350, 80).pad(25);
         pauseMenuTable.row();
@@ -93,8 +101,8 @@ public class GameMenu {
         eventTrackerTable.setVisible(false); // Initially hidden
         stage.addActor(eventTrackerTable);
 
-        eventTrackerPlaceholderLabel = new Label("this will be used to track event types", skin);
-        eventTrackerPlaceholderLabel.setFontScale(3f); // Adjust scale as needed
+        eventTrackerPlaceholderLabel = new Label("This will be used to track event types\n\nHidden Events 0/1\nPositive Events 0/1\nNegative Events 0/1", skin);
+        eventTrackerPlaceholderLabel.setFontScale(2f); // Adjust scale as needed
         eventTrackerPlaceholderLabel.setWrap(true); // Allow wrapping
 
         eventTrackerTable.add(eventTrackerPlaceholderLabel).pad(15).width(400); // Add padding and set a width
@@ -116,8 +124,12 @@ public class GameMenu {
      * Makes the pause menu table and event tracker visible and positions them.
      */
     public void displayPauseMenu() { // Removed the List parameter for now
+        if (mainGame.getScoreTracker() != null) {
+            scoreLabel.setText("Score: " + mainGame.getScoreTracker().getScore());
+        }
+
         // Recalculate pause menu position
-        pauseMenuTable.pack(); 
+        pauseMenuTable.pack();
         pauseMenuTable.setPosition(
                 (stage.getWidth() - pauseMenuTable.getWidth()) / 2f,
                 (stage.getHeight() - pauseMenuTable.getHeight()) / 2f

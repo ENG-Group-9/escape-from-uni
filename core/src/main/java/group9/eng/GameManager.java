@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import group9.eng.components.AnimationComponent;
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
+// import group9.eng.components.JiggleComponent; // JiggleComponent was in the original but not used, uncomment if needed
 
 /**
  * The main game class.
@@ -60,10 +61,12 @@ public class GameManager extends ApplicationAdapter {
     private Stage uiStage;
     private Skin skin;
     private Label timerLabel;
+    private Label scoreLabel;
     private EventDialogue eventDialogue;
 
     // Logic Managers
     private TimeTracker timeTracker;
+    private ScoreTracker scoreTracker;
     private GameMenu gameMenu;
     private TimeTable timeTable;
 
@@ -158,6 +161,7 @@ public class GameManager extends ApplicationAdapter {
             // ----------------------
 
             timeTracker = new TimeTracker(300f);
+            scoreTracker = new ScoreTracker(); // Initialise score tracker
 
             // Create and configure the root table for UI
             Table table = new Table();
@@ -167,9 +171,17 @@ public class GameManager extends ApplicationAdapter {
             // Timer Label setup using the table
             timerLabel = new Label("05:00", skin);
             timerLabel.setFontScale(4);
+
+            // Score Label setup
+            scoreLabel = new Label("Score: 0", skin);
+            scoreLabel.setFontScale(4);
+
+            // Add widgets to the table
             table.add(timerLabel).align(Align.topLeft).pad(10);
-            table.row();
-            table.add().expand(); // Add an expanding cell below the timer to push it up
+            table.add().expandX(); // Add an expanding cell to push timer and score apart
+            table.add(scoreLabel).align(Align.topRight).padTop(10).padRight(30);
+            table.row(); // Move to the next row
+            table.add().expand(); // Add an expanding cell to push the top row up
 
             // Create the GameMenu
             gameMenu = new GameMenu(skin, uiStage, this); // Pass this GameManager instance
@@ -183,7 +195,6 @@ public class GameManager extends ApplicationAdapter {
             resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         }
     }
-
 
     @Override
     public void render() {
@@ -278,7 +289,7 @@ public class GameManager extends ApplicationAdapter {
          splashBatch.draw(splashTexture, x, y, drawWidth, drawHeight);
          splashBatch.end();
 
-         splashBatch.setColor(c.r, c.g, c.b, 1f); 
+         splashBatch.setColor(c.r, c.g, c.b, 1f);
      }
 
 
@@ -318,6 +329,9 @@ public class GameManager extends ApplicationAdapter {
                     // Check for finding timetable at CS building
                     if (!timeTable.hasTimeTable() && eventManager.checkCSBuilding(playerPos))   {
                         timeTable.foundTimeTable();
+                        if (scoreTracker != null) { // Update score
+                            scoreTracker.update(100);
+                        }
                         if (eventDialogue != null) { // Check dialogue exists
                             eventDialogue.show("Well done, you have collected a new timetable!");
                         }
@@ -332,6 +346,11 @@ public class GameManager extends ApplicationAdapter {
         // Update timer label text
         if (timerLabel != null && timeTracker != null) {
             timerLabel.setText(timeTracker.getFormattedTime());
+        }
+
+        // Update score label text
+        if (scoreLabel != null && scoreTracker != null) {
+            scoreLabel.setText("Score: " + scoreTracker.getScore());
         }
 
         if (uiStage != null) uiStage.act(delta);
@@ -385,7 +404,6 @@ public class GameManager extends ApplicationAdapter {
             Gdx.gl.glDisable(GL20.GL_BLEND);        }
     }
 
-
     public void resumeGame() {
         if (isPaused) {
             togglePause();
@@ -425,6 +443,14 @@ public class GameManager extends ApplicationAdapter {
                  gameMenu.displayPauseMenu(); // Call without arguments to reposition
             }
         }
+    }
+    
+    /**
+     * Provides a reference to the ScoreTracker.
+     * @return The game's ScoreTracker instance.
+     */
+    public ScoreTracker getScoreTracker() {
+        return scoreTracker;
     }
 
     @Override
