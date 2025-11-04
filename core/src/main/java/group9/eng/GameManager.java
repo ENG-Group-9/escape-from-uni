@@ -25,7 +25,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import group9.eng.components.AnimationComponent;
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
+import group9.eng.events.EventDialogue;
 // import group9.eng.components.JiggleComponent; // JiggleComponent was in the original but not used, uncomment if needed
+import group9.eng.events.EventManager;
 
 /**
  * The main game class.
@@ -109,23 +111,25 @@ public class GameManager extends ApplicationAdapter {
             camera = new Camera(viewport);
             entityManager = new EntityManager();
 
-            map = new Map(physicsWorld, viewport); // Needs to be initialised before EventManager if EventManager uses map dimensions
-
             // --- UI Setup ---
             uiStage = new Stage(new ScreenViewport()); // UI uses screen coordinates
             Gdx.input.setInputProcessor(uiStage);
             skin = new Skin(Gdx.files.internal("uiskin.json"));
             csBuildingTexture = new Texture(Gdx.files.internal("ComputerSciencePixel.png"));
 
-            // Event system setup (ensure map is initialised first if needed)
+            // Event system setup
             timeTable = new TimeTable();
-            eventManager = new EventManager(map); // Pass map here
+            eventManager = new EventManager(physicsWorld);
             eventDialogue = new EventDialogue(skin, uiStage);
-            eventManager.setEventDialogue(eventDialogue); // Set dialogue for events
+
+            timeTracker = new TimeTracker(300f);
+            scoreTracker = new ScoreTracker(); // Initialise score tracker
+
+            map = new Map(physicsWorld, viewport, eventDialogue, scoreTracker); // Needs to be initialised before EventManager if EventManager uses map dimensions
 
             // --- Entity Creation ---
             player = entityManager.createEntity(
-                new BodyComponent(physicsWorld, 50, 50, 4),
+                new BodyComponent(physicsWorld, 200, 50, 4),
                 new ControlComponent(500),
                 new AnimationComponent("dummy.png", 16, 16)
                     .add_animation("idle", new Animation(
@@ -159,9 +163,6 @@ public class GameManager extends ApplicationAdapter {
             }
             */
             // ----------------------
-
-            timeTracker = new TimeTracker(300f);
-            scoreTracker = new ScoreTracker(); // Initialise score tracker
 
             // Create and configure the root table for UI
             Table table = new Table();
@@ -320,24 +321,7 @@ public class GameManager extends ApplicationAdapter {
             if (entityManager != null) entityManager.update();
 
             // Event system updates
-            if (eventManager != null && timeTable != null && player != null)  { // Check player exists
-                BodyComponent playerBody = (BodyComponent)player.getComponent(BodyComponent.class);
-                if (playerBody != null) {
-                    Vector2 playerPos = playerBody.getPosition();
-                    eventManager.update(playerPos, timeTable);
-
-                    // Check for finding timetable at CS building
-                    if (!timeTable.hasTimeTable() && eventManager.checkCSBuilding(playerPos))   {
-                        timeTable.foundTimeTable();
-                        if (scoreTracker != null) { // Update score
-                            scoreTracker.update(100);
-                        }
-                        if (eventDialogue != null) { // Check dialogue exists
-                            eventDialogue.show("Well done, you have collected a new timetable!");
-                        }
-                    }
-                }
-            }
+            if (eventManager != null) eventManager.update();
             if (camera != null) camera.update(); // Update camera if not paused
         }
 
@@ -362,22 +346,6 @@ public class GameManager extends ApplicationAdapter {
         // --- Draw Game World ---
         if (viewport != null) viewport.apply(); // Apply game viewport
         if (map != null) map.draw();
-        //if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {
-        //    hitboxDebugRenderer.render(physicsWorld, viewport.getCamera().combined);
-        //}
-
-        // Draw CS building sprite
-        if (eventManager != null && csBuildingTexture != null && viewport != null) {
-            float csX = eventManager.getCsBuildingX();
-            float csY = eventManager.getCsBuildingY();
-            float csW = eventManager.getCsBuildingWidth();
-            float csH = eventManager.getCsBuildingHeight();
-
-            splashBatch.setProjectionMatrix(viewport.getCamera().combined);
-            splashBatch.begin();
-            splashBatch.draw(csBuildingTexture, csX, csY, csW, csH);
-            splashBatch.end();
-        }
 
         // Optional Debug Renderer
         // if (hitboxDebugRenderer != null && physicsWorld != null && viewport != null) {

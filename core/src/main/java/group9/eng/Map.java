@@ -20,6 +20,10 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import group9.eng.events.EventDialogue;
+import group9.eng.events.EventTrigger;
+import group9.eng.events.GameEvent;
+
 public class Map {
     private final World physicsWorld;
     private final Viewport viewport;
@@ -30,7 +34,7 @@ public class Map {
     private final int width;
     private final int height;
 
-    public Map(World physicsWorld, Viewport viewport) {
+    public Map(World physicsWorld, Viewport viewport, EventDialogue dialogue, ScoreTracker scoreTracker) {
         this.physicsWorld = physicsWorld;
         this.viewport = viewport;
 
@@ -43,7 +47,7 @@ public class Map {
         height = mapProperties.get("height", Integer.class) * tileSize;
 
         create_collision_shapes();
-        create_event_areas();
+        create_event_areas(dialogue, scoreTracker);
     }
 
     /**
@@ -116,6 +120,7 @@ public class Map {
                             cell.getFlipHorizontally() ? -1 : 1,
                             cell.getFlipVertically()   ? -1 : 1
                         );
+                        polygon.setRotation(cell.getRotation() * 90);
                         
                         // Finally the collision shape is added to the static body.
                         PolygonShape polygonShape = new PolygonShape();
@@ -128,7 +133,7 @@ public class Map {
         }
     }
 
-    private void create_event_areas() {
+    private void create_event_areas(EventDialogue dialogue, ScoreTracker scoreTracker) {
         MapObjects objects = mapData.getLayers().get(2).getObjects();
 
         for (MapObject object: objects) {
@@ -146,7 +151,18 @@ public class Map {
             body.createFixture(fixtureDef);
             polygonShape.dispose();
 
-            body.setUserData(new Event((int) object.getProperties().get("eventid")));
+            body.setUserData(new EventTrigger(
+                new GameEvent(
+                    (String) object.getProperties().get("message"),
+                    (int) object.getProperties().get("points"),
+                    (Boolean) object.getProperties().get("repeat"),
+                    (float) object.getProperties().get("chance"),
+                    (int) object.getProperties().get("when"),
+                    (float) object.getProperties().get("updateperiod"),
+                    dialogue,
+                    scoreTracker
+                )
+            ));
         }
     }
 

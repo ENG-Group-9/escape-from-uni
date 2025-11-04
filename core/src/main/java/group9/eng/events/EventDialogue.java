@@ -1,4 +1,4 @@
-package group9.eng;
+package group9.eng.events;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
