@@ -4,38 +4,47 @@ package group9.eng;
  * Manages the game's countdown timer logic, as per the architecture plan.
  * This class encapsulates the state and behavior of the timer.
  */
-public class TimeTracker {
+public class TimeTracker extends Tracker {
 
-    private float timeRemaining;
     private boolean isPaused = false;
 
     /**
-     * Constructor to initialise the timer.
-     * @param seconds The initial time in seconds for the countdown.
+     * Empty constructor for timer (default to time = 0)
      */
-    public TimeTracker(float seconds) {
-        this.timeRemaining = seconds;
+    public TimeTracker() {
+        super();
+    }
+
+    /**
+     * Constructor for timer with starting configuration
+     * @param startTime The starting time for the timer.
+     */
+    public TimeTracker(float startTime) {
+        super(startTime);
     }
 
     /**
      * Updates the timer. This should be called once per frame.
+     * 
      * @param delta The time in seconds since the last frame.
      */
+    @Override
     public void update(float delta) {
-        if (!isPaused && timeRemaining > 0) {
-            timeRemaining -= delta;
-            if (timeRemaining < 0) {
-                timeRemaining = 0;
+        if (!isPaused && this.currentValue > 0) {
+            this.currentValue -= delta;
+            if (this.currentValue < 0) {
+                this.currentValue = 0;
             }
         }
     }
 
     /**
      * Formats the remaining time into an MM:SS string for display.
+     * 
      * @return A string representing the formatted time.
      */
     public String getFormattedTime() {
-        int totalSeconds = (int) timeRemaining;
+        int totalSeconds = (int) this.currentValue;
         int minutes = totalSeconds / 60;
         int seconds = totalSeconds % 60;
         return String.format("%02d:%02d", minutes, seconds);
@@ -57,17 +66,10 @@ public class TimeTracker {
 
     /**
      * Checks if the time has run out.
+     * 
      * @return true if time is up, false otherwise.
      */
     public boolean isTimeUp() {
-        return timeRemaining <= 0;
-    }
-
-    /**
-     * Gets the remaining time in seconds.
-     * @return The raw float value of the time remaining.
-     */
-    public float getTimeRemaining() {
-        return timeRemaining;
+        return this.currentValue <= 0;
     }
 }
