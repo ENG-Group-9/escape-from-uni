@@ -21,6 +21,7 @@ public class EventDialogue {
     private final float buttonWidth = 200;
     private final float buttonHeight = 60;
     private final float padding = 40;
+    private final float dialogueWidth = 600;
 
     /** Creates a new EventDialogue with the specified Skin and Stage.
      * The dialogue is hidden until activated.
@@ -50,8 +51,14 @@ public class EventDialogue {
             }
         });
 
-        dialogueTable.add(messageLabel).pad(padding).growX().row();
-        dialogueTable.add(okButton).size(buttonWidth, buttonHeight).pad(20);
+        dialogueTable.add(messageLabel).pad(padding).prefWidth(dialogueWidth).center().row();
+        dialogueTable.add(okButton).size(buttonWidth, buttonHeight).pad(20).center();
+
+        dialogueTable.pack();
+        dialogueTable.setPosition(
+            (stage.getWidth() - dialogueTable.getWidth()) / 2f,
+            (stage.getHeight() - dialogueTable.getHeight()) / 2f
+        );
     }
 
     /**
@@ -64,17 +71,7 @@ public class EventDialogue {
     public void show(String message) {
         messageLabel.setText(message);
 
-        dialogueTable.clearChildren();
-        // Reduced the preferred width percentage from 0.5f to 0.3f
-        dialogueTable.add(messageLabel).pad(padding).prefWidth(stage.getWidth() * 0.3f).center().row();
-        dialogueTable.add(okButton).size(buttonWidth, buttonHeight).pad(20).center();
-
         dialogueTable.pack();
-
-        dialogueTable.setPosition(
-            (stage.getWidth() - dialogueTable.getWidth()) / 2f,
-            (stage.getHeight() - dialogueTable.getHeight()) / 2f
-        );
 
         dialogueTable.setVisible(true);
         dialogueTable.toFront();
@@ -87,4 +84,3 @@ public class EventDialogue {
         dialogueTable.setVisible(false);
     }
 }
-

@@ -160,15 +160,7 @@ public class GameMenu {
         eventTrackerTable.pack(); // Pack the table around the label
 
         // Position event tracker in top right
-        repositionEventTracker();
-    }
-
-    /**
-     * Recalculates and sets the position of the event tracker table to the top right corner.
-     */
-    private void repositionEventTracker() {
-         eventTrackerTable.pack(); // Ensure size is correct based on content
-         eventTrackerTable.setPosition(stage.getWidth() - 10, stage.getHeight() - 10, Align.topRight);
+        eventTrackerTable.setPosition(stage.getWidth() - 10, stage.getHeight() - 10, Align.topRight);
     }
 
     /**
@@ -179,17 +171,9 @@ public class GameMenu {
             scoreLabel.setText("Score: " + mainGame.getScoreTracker().getValue());
         }
 
-        // Recalculate pause menu position
-        pauseMenuTable.pack();
-        pauseMenuTable.setPosition(
-                (stage.getWidth() - pauseMenuTable.getWidth()) / 2f,
-                (stage.getHeight() - pauseMenuTable.getHeight()) / 2f
-        );
         pauseMenuTable.setVisible(true);
         pauseMenuTable.toFront();
 
-        // Reposition and display event tracker
-        repositionEventTracker(); // Update position based on current stage size
         eventTrackerTable.setVisible(true);
         eventTrackerTable.toFront(); // Ensure it's on top
     }
@@ -205,12 +189,6 @@ public class GameMenu {
             finalScoreLabel.setText("Final Score: " + mainGame.getScoreTracker().getValue());
         }
 
-        // Recalculate game over menu position
-        gameOverMenuTable.pack();
-        gameOverMenuTable.setPosition(
-                (stage.getWidth() - gameOverMenuTable.getWidth()) / 2f,
-                (stage.getHeight() - gameOverMenuTable.getHeight()) / 2f
-        );
         gameOverMenuTable.setVisible(true);
         gameOverMenuTable.toFront();
 

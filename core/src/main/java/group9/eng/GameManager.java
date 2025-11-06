@@ -17,7 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align; // Ensure Align is imported
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -54,7 +54,7 @@ public class GameManager extends ApplicationAdapter {
     private Viewport viewport;
     private Camera camera;
     private Map map;
-    private EventManager eventManager; // Keep the field
+    private EventManager eventManager;
 
     private Entity player;
 
@@ -333,6 +333,13 @@ public class GameManager extends ApplicationAdapter {
         // Update timer label text
         if (timerLabel != null && timeTracker != null) {
             timerLabel.setText(timeTracker.getFormattedTime());
+
+            // Set timer colour to red if 60 seconds or less
+            if (timeTracker.getValue() <= 60f) {
+                timerLabel.setColor(Color.RED);
+            } else {
+                timerLabel.setColor(Color.WHITE);
+            }
         }
 
         // Update score label text
@@ -442,14 +449,7 @@ public class GameManager extends ApplicationAdapter {
             if (viewport != null) viewport.update(width, height, true); // Update game world viewport
             if (uiStage != null) uiStage.getViewport().update(width, height, true); // Update UI viewport
 
-             // If paused when resizing, redisplay menus correctly
-            if (gameMenu != null && isPaused) {
-                 if (currentState == GameState.GAME) {
-                    gameMenu.displayPauseMenu(); // Call without arguments to reposition
-                 } else if (currentState == GameState.GAME_OVER) {
-                    gameMenu.displayGameOverMenu();
-                 }
-            }
+            
         }
     }
     
