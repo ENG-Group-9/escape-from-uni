@@ -13,6 +13,7 @@ import group9.eng.Entity;
 public class ControlComponent extends Component {
     private Body body;
     private float speed;
+    private float multiplier;
     private AnimationComponent animationComponent;
 
     /**
@@ -21,6 +22,7 @@ public class ControlComponent extends Component {
      */
     public ControlComponent(float speed) {
         this.speed = speed;
+        this.multiplier = 1.0f;
     }
     
     @Override
@@ -39,7 +41,7 @@ public class ControlComponent extends Component {
         Vector2 v = new Vector2(
             (Gdx.input.isKeyPressed(Keys.D) ? 1 : 0) - (Gdx.input.isKeyPressed(Keys.A) ? 1 : 0),
             (Gdx.input.isKeyPressed(Keys.W) ? 1 : 0) - (Gdx.input.isKeyPressed(Keys.S) ? 1 : 0)
-        ).nor().scl(speed * body.getMass());
+        ).nor().scl(speed * multiplier * body.getMass());
 
         body.applyForceToCenter(v, true);
 
@@ -52,5 +54,14 @@ public class ControlComponent extends Component {
                 animationComponent.setDirection(v);
             }
         }
+
+        if (multiplier > 1) {
+            multiplier -= 0.0002;
+            multiplier = Math.max(1, multiplier);
+        }
+    }
+
+    public void addSpeedMultiplier(double factor) {
+        multiplier += factor;
     }
 }

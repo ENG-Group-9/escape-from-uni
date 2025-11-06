@@ -159,6 +159,7 @@ public class Map {
                     (float) object.getProperties().get("chance"),
                     (int) object.getProperties().get("when"),
                     (float) object.getProperties().get("updateperiod"),
+                    (float) object.getProperties().get("speedboost"),
                     dialogue,
                     scoreTracker
                 )
