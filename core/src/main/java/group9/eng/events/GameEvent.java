@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 
 import group9.eng.Entity;
 import group9.eng.ScoreTracker;
+import group9.eng.components.ControlComponent;
 
 public class GameEvent {
     private String message;
@@ -14,6 +15,7 @@ public class GameEvent {
     private int when;
     private double timer;
     private double updatePeriod;
+    private double speedBoost;
 
     private EventDialogue dialogue;
     private ScoreTracker scoreTracker;
@@ -25,6 +27,7 @@ public class GameEvent {
         double chance,
         int when,
         double updatePeriod,
+        double speedBoost,
         EventDialogue dialogue,
         ScoreTracker scoreTracker
     ) {
@@ -33,6 +36,7 @@ public class GameEvent {
         this.repeat = repeat;
         alreadyTriggered = false;
         this.chance = chance;
+        this.speedBoost = speedBoost;
 
         this.when = when;
         this.updatePeriod = updatePeriod;
@@ -68,5 +72,8 @@ public class GameEvent {
         if (!repeat) alreadyTriggered = true;
         dialogue.show(message);
         scoreTracker.update(points);
+        if (speedBoost != 0) {
+            ((ControlComponent) entity.getComponent(ControlComponent.class)).addSpeedMultiplier(speedBoost);
+        }
     }
 }
