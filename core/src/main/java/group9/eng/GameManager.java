@@ -334,7 +334,7 @@ public class GameManager extends ApplicationAdapter {
 
         // Update score label text
         if (scoreLabel != null && scoreTracker != null) {
-            scoreLabel.setText("Score: " + scoreTracker.getScore());
+            scoreLabel.setText("Score: " + scoreTracker.getValue());
         }
 
         if (uiStage != null) uiStage.act(delta);
