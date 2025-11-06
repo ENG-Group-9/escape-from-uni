@@ -121,7 +121,7 @@ public class GameManager extends ApplicationAdapter {
             eventManager = new EventManager(physicsWorld);
             eventDialogue = new EventDialogue(skin, uiStage);
 
-            timeTracker = new TimeTracker(10f);
+            timeTracker = new TimeTracker(300f);
             scoreTracker = new ScoreTracker(); // Initialise score tracker
 
             map = new Map(physicsWorld, viewport, eventDialogue, scoreTracker); // Needs to be initialised before EventManager if EventManager uses map dimensions
