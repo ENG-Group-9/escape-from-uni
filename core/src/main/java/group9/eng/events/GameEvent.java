@@ -13,12 +13,14 @@ public class GameEvent {
     private Boolean alreadyTriggered;
     private double chance;
     private int when;
+    private int eventType;
     private double timer;
     private double updatePeriod;
     private double speedBoost;
 
     private EventDialogue dialogue;
     private ScoreTracker scoreTracker;
+    private EventCompletionTracker eventCompletionTracker;
 
     public GameEvent(
         String message,
@@ -28,8 +30,11 @@ public class GameEvent {
         int when,
         double updatePeriod,
         double speedBoost,
+        int eventType, // "0" hidden, "1" positive, "2" negative, "3" null/other
         EventDialogue dialogue,
-        ScoreTracker scoreTracker
+        ScoreTracker scoreTracker,
+        EventCompletionTracker eventCompletionTracker
+        
     ) {
         this.message = message;
         this.points = points;
@@ -44,6 +49,8 @@ public class GameEvent {
 
         this.dialogue = dialogue;
         this.scoreTracker = scoreTracker;
+        this.eventType = eventType;
+        this.eventCompletionTracker = eventCompletionTracker;
     }
 
     public void start(Entity entity) {
@@ -75,5 +82,6 @@ public class GameEvent {
         if (speedBoost != 0) {
             ((ControlComponent) entity.getComponent(ControlComponent.class)).addSpeedMultiplier(speedBoost);
         }
+        if (eventType != 3) eventCompletionTracker.AddEventCompletionData(eventType);
     }
 }

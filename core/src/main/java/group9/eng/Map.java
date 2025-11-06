@@ -20,6 +20,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import group9.eng.events.EventCompletionTracker;
 import group9.eng.events.EventDialogue;
 import group9.eng.events.EventTrigger;
 import group9.eng.events.GameEvent;
@@ -34,7 +35,7 @@ public class Map {
     private final int width;
     private final int height;
 
-    public Map(World physicsWorld, Viewport viewport, EventDialogue dialogue, ScoreTracker scoreTracker) {
+    public Map(World physicsWorld, Viewport viewport, EventDialogue dialogue, ScoreTracker scoreTracker, EventCompletionTracker eventCompletionTracker) {
         this.physicsWorld = physicsWorld;
         this.viewport = viewport;
 
@@ -47,7 +48,7 @@ public class Map {
         height = mapProperties.get("height", Integer.class) * tileSize;
 
         create_collision_shapes();
-        create_event_areas(dialogue, scoreTracker);
+        create_event_areas(dialogue, scoreTracker, eventCompletionTracker);
     }
 
     /**
@@ -133,7 +134,7 @@ public class Map {
         }
     }
 
-    private void create_event_areas(EventDialogue dialogue, ScoreTracker scoreTracker) {
+    private void create_event_areas(EventDialogue dialogue, ScoreTracker scoreTracker, EventCompletionTracker eventCompletionTracker) {
         MapObjects objects = mapData.getLayers().get(2).getObjects();
 
         for (MapObject object: objects) {
@@ -160,8 +161,10 @@ public class Map {
                     (int) object.getProperties().get("when"),
                     (float) object.getProperties().get("updateperiod"),
                     (float) object.getProperties().get("speedboost"),
+                    (int) object.getProperties().get("eventType"),
                     dialogue,
-                    scoreTracker
+                    scoreTracker,
+                    eventCompletionTracker
                 )
             ));
         }

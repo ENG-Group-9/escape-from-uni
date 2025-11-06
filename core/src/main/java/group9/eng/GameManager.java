@@ -25,6 +25,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import group9.eng.components.AnimationComponent;
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
+import group9.eng.events.EventCompletionTracker;
 import group9.eng.events.EventDialogue;
 import group9.eng.events.EventManager;
 
@@ -68,6 +69,7 @@ public class GameManager extends ApplicationAdapter {
     // Logic Managers
     private TimeTracker timeTracker;
     private ScoreTracker scoreTracker;
+    private EventCompletionTracker eventCompletionTracker;
     private GameMenu gameMenu;
     private TimeTable timeTable;
 
@@ -123,8 +125,9 @@ public class GameManager extends ApplicationAdapter {
 
             timeTracker = new TimeTracker(300f);
             scoreTracker = new ScoreTracker(); // Initialise score tracker
+            eventCompletionTracker = new EventCompletionTracker(new int[]{1,1,1});
 
-            map = new Map(physicsWorld, viewport, eventDialogue, scoreTracker); // Needs to be initialised before EventManager if EventManager uses map dimensions
+            map = new Map(physicsWorld, viewport, eventDialogue, scoreTracker, eventCompletionTracker); // Needs to be initialised before EventManager if EventManager uses map dimensions
 
             // --- Entity Creation ---
             player = entityManager.createEntity(
@@ -467,6 +470,9 @@ public class GameManager extends ApplicationAdapter {
      */
     public EventDialogue getEventDialogue() {
         return eventDialogue;
+    }
+    public EventCompletionTracker getEventCompletionTracker() {
+        return eventCompletionTracker;
     }
 
     @Override

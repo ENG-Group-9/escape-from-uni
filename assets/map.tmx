@@ -99,6 +99,7 @@
     <property name="speedboost" type="float" value="0"/>
     <property name="updateperiod" type="float" value="0"/>
     <property name="when" type="int" value="0"/>
+    <property name="eventType" type="int" value="2"/>
    </properties>
    <polygon points="0,0 104,0 104,56 0,56"/>
   </object>
@@ -111,6 +112,7 @@
     <property name="speedboost" type="float" value="0.5"/>
     <property name="updateperiod" type="float" value="0"/>
     <property name="when" type="int" value="0"/>
+    <property name="eventType" type="int" value="1"/>
    </properties>
    <polygon points="0,8 24,8 24,16 0,16"/>
   </object>
@@ -124,6 +126,7 @@ Visit the Computer Science reception to get a new one.</property>
     <property name="speedboost" type="float" value="0"/>
     <property name="updateperiod" type="float" value="5"/>
     <property name="when" type="int" value="1"/>
+    <property name="eventType" type="int" value="3"/>
    </properties>
    <polygon points="320,0 640,0 640,320 320,320"/>
   </object>

@@ -9,6 +9,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.math.Vector2;
+
+
+import group9.eng.events.EventCompletionTracker;
+
 
 
 /**
@@ -174,6 +179,17 @@ public class GameMenu {
         pauseMenuTable.setVisible(true);
         pauseMenuTable.toFront();
 
+        // Update the text of the event tracker to match current data
+        EventCompletionTracker eventCompletionTracker = mainGame.getEventCompletionTracker();
+        Vector2[] data = eventCompletionTracker.GetEventCompletionData();
+        String tempEventText = "This will be used to track event types\n" +
+        "\nHidden Events " + (int)data[0].x + "/" + (int)data[0].y +
+        "\nPositive Events " + (int)data[1].x  + "/" + (int)data[1].y +
+        "\nNegative Events " + (int)data[2].x  + "/" + (int)data[2].y ;  
+        eventTrackerPlaceholderLabel.setText(tempEventText);
+
+        // Reposition and display event tracker
+        //repositionEventTracker(); // Update position based on current stage size
         eventTrackerTable.setVisible(true);
         eventTrackerTable.toFront(); // Ensure it's on top
     }
