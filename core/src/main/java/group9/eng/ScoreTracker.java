@@ -5,41 +5,29 @@ package group9.eng;
  * This class tracks the player's current score and provides
  * methods to update it.
  */
-public class ScoreTracker {
+public class ScoreTracker extends Tracker{
 
     /**
-     * The player's current score.
-     */
-    private int currentScore;
-
-    /**
-     * Constructor to initialise the ScoreTracker.
+     * Empty constructor for ScoreTracker
+     * Defaults to score = 0
      */
     public ScoreTracker() {
-        this.currentScore = 0;
+        super();
     }
 
     /**
-     * Updates the score by adding the given number of points.
-     * This is called by other systems, like Events, to modify the score.
-     * @param points The number of points to add to the current score.
+     * Constructor for ScoreTracker c;ass
+     * @param startScore Score that tracker begins with.
      */
-    public void update(int points) {
-        this.currentScore += points;
+    public ScoreTracker(float startScore) {
+        super(startScore);
     }
 
     /**
-     * Gets the current score.
-     * @return The current score as an integer.
+     * @return A string stating current score value.
      */
-    public int getScore() {
-        return this.currentScore;
-    }
-
-    /**
-     * Resets the score to 0.
-     */
-    public void resetScore() {
-        this.currentScore = 0;
+    public String toString(){
+        String formatString = "Current Score: %d";
+        return String.format(formatString, (int)this.currentValue);
     }
 }

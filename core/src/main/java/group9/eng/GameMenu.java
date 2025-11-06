@@ -121,7 +121,7 @@ public class GameMenu {
      */
     public void displayPauseMenu() { // Removed the List parameter for now
         if (mainGame.getScoreTracker() != null) {
-            scoreLabel.setText("Score: " + mainGame.getScoreTracker().getScore());
+            scoreLabel.setText("Score: " + mainGame.getScoreTracker().getValue());
         }
 
         // Recalculate pause menu position
