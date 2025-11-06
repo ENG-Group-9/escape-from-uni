@@ -26,6 +26,12 @@ public class GameMenu {
     private final Table eventTrackerTable;
     private final Label eventTrackerPlaceholderLabel;
 
+    private final Table gameOverMenuTable;
+    private final Label gameOverLabel;
+    private final Label finalScoreLabel;
+    private final TextButton restartButton;
+    private final TextButton quitGameOverButton;
+
     /**
      * Constructor for the GameMenu.
      * @param skin The Skin to use for UI elements.
@@ -91,6 +97,55 @@ public class GameMenu {
                 (stage.getHeight() - pauseMenuTable.getHeight()) / 2f
         );
 
+        // --- Game Over Menu Setup ---
+        gameOverMenuTable = new Table();
+        gameOverMenuTable.setBackground(skin.getDrawable("default-window"));
+        gameOverMenuTable.setVisible(false);
+        stage.addActor(gameOverMenuTable);
+
+        gameOverLabel = new Label("GAME OVER!", skin);
+        gameOverLabel.setFontScale(4);
+        gameOverLabel.setAlignment(Align.center);
+
+        finalScoreLabel = new Label("Final Score: 0", skin);
+        finalScoreLabel.setFontScale(2.0f);
+        finalScoreLabel.setAlignment(Align.center);
+
+        restartButton = new TextButton("Restart", skin);
+        restartButton.getLabel().setFontScale(2.0f);
+
+        quitGameOverButton = new TextButton("Quit", skin);
+        quitGameOverButton.getLabel().setFontScale(2.0f);
+
+        gameOverMenuTable.add(gameOverLabel).center().padTop(80).padBottom(25).padLeft(100).padRight(100);
+        gameOverMenuTable.row();
+        gameOverMenuTable.add(finalScoreLabel).center().padBottom(25);
+        gameOverMenuTable.row();
+        gameOverMenuTable.add(restartButton).center().size(350, 80).pad(25);
+        gameOverMenuTable.row();
+        gameOverMenuTable.add(quitGameOverButton).center().size(350, 80).pad(25).padBottom(60);
+
+        restartButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                mainGame.restartGame();
+            }
+        });
+
+        quitGameOverButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                Gdx.app.exit();
+            }
+        });
+
+        gameOverMenuTable.pack();
+        gameOverMenuTable.setPosition(
+                (stage.getWidth() - gameOverMenuTable.getWidth()) / 2f,
+                (stage.getHeight() - gameOverMenuTable.getHeight()) / 2f
+        );
+
+
         // --- Event Tracker Placeholder Setup ---
         eventTrackerTable = new Table();
         eventTrackerTable.setBackground(skin.getDrawable("default-window")); // Add background
@@ -140,11 +195,40 @@ public class GameMenu {
     }
 
     /**
+     * Makes the game over menu table visible and positions it.
+     */
+    public void displayGameOverMenu() {
+        // Ensure pause menu is hidden
+        hidePauseMenu();
+
+        if (mainGame.getScoreTracker() != null) {
+            finalScoreLabel.setText("Final Score: " + mainGame.getScoreTracker().getValue());
+        }
+
+        // Recalculate game over menu position
+        gameOverMenuTable.pack();
+        gameOverMenuTable.setPosition(
+                (stage.getWidth() - gameOverMenuTable.getWidth()) / 2f,
+                (stage.getHeight() - gameOverMenuTable.getHeight()) / 2f
+        );
+        gameOverMenuTable.setVisible(true);
+        gameOverMenuTable.toFront();
+
+        eventTrackerTable.setVisible(false);
+
+        if(mainGame.getEventDialogue() != null) {
+            mainGame.getEventDialogue().hide();
+        }
+    }
+
+
+    /**
      * Hides the pause menu table and the event tracker.
      */
     public void hidePauseMenu() {
         pauseMenuTable.setVisible(false);
         eventTrackerTable.setVisible(false); // Hide tracker too
+        gameOverMenuTable.setVisible(false);
     }
 
     /**

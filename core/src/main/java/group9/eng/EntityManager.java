@@ -55,4 +55,11 @@ public class EntityManager {
         }
         entityBatch.end();
     }
+
+    /**
+     * Disposes of the SpriteBatch used by this manager.
+     */
+    public void dispose() {
+        entityBatch.dispose();
+    }
 }

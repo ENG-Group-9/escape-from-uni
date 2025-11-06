@@ -26,7 +26,6 @@ import group9.eng.components.AnimationComponent;
 import group9.eng.components.BodyComponent;
 import group9.eng.components.ControlComponent;
 import group9.eng.events.EventDialogue;
-// import group9.eng.components.JiggleComponent; // JiggleComponent was in the original but not used, uncomment if needed
 import group9.eng.events.EventManager;
 
 /**
@@ -35,7 +34,7 @@ import group9.eng.events.EventManager;
 public class GameManager extends ApplicationAdapter {
 
     private enum GameState {
-        SPLASH, FADING_OUT, GAME, FADING_IN
+        SPLASH, FADING_OUT, GAME, FADING_IN, GAME_OVER
     }
 
     private GameState currentState = GameState.SPLASH;
@@ -122,7 +121,7 @@ public class GameManager extends ApplicationAdapter {
             eventManager = new EventManager(physicsWorld);
             eventDialogue = new EventDialogue(skin, uiStage);
 
-            timeTracker = new TimeTracker(300f);
+            timeTracker = new TimeTracker(10f);
             scoreTracker = new ScoreTracker(); // Initialise score tracker
 
             map = new Map(physicsWorld, viewport, eventDialogue, scoreTracker); // Needs to be initialised before EventManager if EventManager uses map dimensions
@@ -222,6 +221,9 @@ public class GameManager extends ApplicationAdapter {
                 } // Fall through to updateGame even if just initialised
                 updateGame(delta); // Always update game logic if not splash/fading out
                 break;
+            case GAME_OVER:
+                // Don't update the game, but allow UI to be updated
+                break;
         }
          // Update UI stage regardless of pause state for menu interactions
         if (uiStage != null) uiStage.act(delta);
@@ -235,6 +237,7 @@ public class GameManager extends ApplicationAdapter {
                 break;
             case GAME:
             case FADING_IN:
+            case GAME_OVER:
                 if (gameInitialised) {
                     drawGame();
                 }
@@ -305,16 +308,16 @@ public class GameManager extends ApplicationAdapter {
             }
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE) && currentState == GameState.GAME) {
            togglePause();
         }
 
-        // Only update game world logic if not paused and game is running or fading in
-        if (!isPaused && (currentState == GameState.GAME || currentState == GameState.FADING_IN)) {
+        // Only update game world logic if not paused and game is running
+        if (!isPaused && currentState == GameState.GAME) {
              if (timeTracker != null) {
                  timeTracker.update(delta);
                  if (timeTracker.isTimeUp()) {
-                     // TODO: Game over logic
+                     triggerGameOver();
                  }
             }
             if (physicsWorld != null) physicsWorld.step(delta, 6, 2);
@@ -337,7 +340,6 @@ public class GameManager extends ApplicationAdapter {
             scoreLabel.setText("Score: " + scoreTracker.getValue());
         }
 
-        if (uiStage != null) uiStage.act(delta);
     }
 
     private void drawGame() {
@@ -373,9 +375,43 @@ public class GameManager extends ApplicationAdapter {
     }
 
     public void resumeGame() {
-        if (isPaused) {
+        if (isPaused && currentState == GameState.GAME) {
             togglePause();
         }
+    }
+
+    private void triggerGameOver() {
+        if (currentState != GameState.GAME_OVER) {
+            currentState = GameState.GAME_OVER;
+            isPaused = true;
+            if (timeTracker != null) timeTracker.pause();
+            if (gameMenu != null) {
+                gameMenu.displayGameOverMenu();
+            }
+        }
+    }
+
+    /**
+     * Disposes of all resources and resets the game state to restart.
+     */
+    public void restartGame() {
+        // Dispose of all game-related resources
+        if (gameInitialised) {
+            if (physicsWorld != null) physicsWorld.dispose();
+            if (hitboxDebugRenderer != null) hitboxDebugRenderer.dispose();
+            if (skin != null) skin.dispose();
+            if (uiStage != null) uiStage.dispose();
+            if (csBuildingTexture != null) csBuildingTexture.dispose();
+            if (map != null) map.dispose();
+            if (entityManager != null) entityManager.dispose(); 
+        }
+
+        // Reset game state flags
+        gameInitialised = false;
+        isPaused = false;
+        currentState = GameState.FADING_IN; // Start with fade in
+        fadeTimer = 0.0f;
+        fadeAlpha = 1.0f; // Start from black
     }
 
     private void togglePause() {
@@ -407,8 +443,12 @@ public class GameManager extends ApplicationAdapter {
             if (uiStage != null) uiStage.getViewport().update(width, height, true); // Update UI viewport
 
              // If paused when resizing, redisplay menus correctly
-            if (gameMenu != null && isPaused) { // Check isPaused flag
-                 gameMenu.displayPauseMenu(); // Call without arguments to reposition
+            if (gameMenu != null && isPaused) {
+                 if (currentState == GameState.GAME) {
+                    gameMenu.displayPauseMenu(); // Call without arguments to reposition
+                 } else if (currentState == GameState.GAME_OVER) {
+                    gameMenu.displayGameOverMenu();
+                 }
             }
         }
     }
@@ -419,6 +459,14 @@ public class GameManager extends ApplicationAdapter {
      */
     public ScoreTracker getScoreTracker() {
         return scoreTracker;
+    }
+
+    /**
+     * Provides a reference to the EventDialogue.
+     * @return The game's EventDialogue instance.
+     */
+    public EventDialogue getEventDialogue() {
+        return eventDialogue;
     }
 
     @Override
@@ -434,7 +482,8 @@ public class GameManager extends ApplicationAdapter {
             if (hitboxDebugRenderer != null) hitboxDebugRenderer.dispose();
             if (skin != null) skin.dispose();
             if (uiStage != null) uiStage.dispose();
-
+            if (map != null) map.dispose(); 
+            if (entityManager != null) entityManager.dispose();
         }
     }
 }

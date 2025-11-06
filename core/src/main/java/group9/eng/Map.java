@@ -178,4 +178,12 @@ public class Map {
     public int getHeight() {
         return height;
     }
+
+    /**
+     * Disposes of the TiledMap and OrthogonalTiledMapRenderer.
+     */
+    public void dispose() {
+        mapData.dispose();
+        mapRenderer.dispose();
+    }
 }
