@@ -2,6 +2,7 @@ package group9.eng.events;
 
 import com.badlogic.gdx.Gdx;
 
+import com.badlogic.gdx.math.Vector2;
 import group9.eng.Entity;
 import group9.eng.ScoreTracker;
 import group9.eng.components.ControlComponent;
@@ -34,7 +35,7 @@ public class GameEvent {
         EventDialogue dialogue,
         ScoreTracker scoreTracker,
         EventCompletionTracker eventCompletionTracker
-        
+
     ) {
         this.message = message;
         this.points = points;
@@ -50,6 +51,7 @@ public class GameEvent {
         this.dialogue = dialogue;
         this.scoreTracker = scoreTracker;
         this.eventType = eventType;
+        // Gdx.app.log("GameEvent", "Constructed event '" + message + "' type=" + eventType); debugging stuf
         this.eventCompletionTracker = eventCompletionTracker;
     }
 
@@ -77,11 +79,29 @@ public class GameEvent {
         if (Math.random() >= chance) return;
         if (alreadyTriggered) return;
         if (!repeat) alreadyTriggered = true;
+
+        // Gdx.app.log("GameEvent", "Constructed event '" + message + "' type=" + eventType); debug
+
         dialogue.show(message);
         scoreTracker.update(points);
         if (speedBoost != 0) {
             ((ControlComponent) entity.getComponent(ControlComponent.class)).addSpeedMultiplier(speedBoost);
         }
-        if (eventType != 3) eventCompletionTracker.AddEventCompletionData(eventType);
+        // map eventType 3 (used by hidden events) to tracker index 0
+        int completionIndex;
+        if (eventType == 3) {
+            completionIndex = 0; // hidden
+        } else {
+            completionIndex = eventType; // 0,1,2 as usual
+        }
+
+        // safety: bounds check in case of bad values
+        Vector2[] data = eventCompletionTracker.GetEventCompletionData();
+        if (completionIndex >= 0 && completionIndex < data.length) {
+            eventCompletionTracker.AddEventCompletionData(completionIndex);
+        }
+        //else {
+            // Gdx.app.log("GameEvent", "Skipped tracker increment (eventType == 3)"); debug
+        //}
     }
 }
