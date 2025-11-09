@@ -134,6 +134,12 @@ public class Map {
         }
     }
 
+    /**
+     * Creates collision shapes for all the defined event areas in the Tiled map.
+     * @param dialogue a reference to an EventDialogue instance.
+     * @param scoreTracker a reference to a ScoreTracker.
+     * @param eventCompletionTracker a reference to an EventCompletionTracker.
+     */
     private void create_event_areas(EventDialogue dialogue, ScoreTracker scoreTracker, EventCompletionTracker eventCompletionTracker) {
         MapObjects objects = mapData.getLayers().get(2).getObjects();
 

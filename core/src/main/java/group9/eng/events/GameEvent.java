@@ -102,15 +102,27 @@ public class GameEvent {
 
         eventCompletionTracker.AddEventToComplete(completionIndex);
     }
-    
+
+    /**
+     * Should be called when an entity has just entered the event's area.
+     * @param entity the Entity that entered the event's area.
+     */
     public void start(Entity entity) {
         if (when == 0) apply(entity);
     }
 
+    /**
+     * Should be called when an entity has just exited the event's area.
+     * @param entity the Entity that exited the event's area.
+     */
     public void end(Entity entity) {
         if (when == 2) apply(entity);
     }
-
+    
+    /**
+     * Should be called when an entity is within the event's area.
+     * @param entity the Entity within the event's area.
+     */
     public void update(Entity entity) {
         if (when != 1) return;
 
@@ -123,6 +135,10 @@ public class GameEvent {
         }
     }
 
+    /**
+     * Causes the behaviour of the event to take place.
+     * @param the Entity to apply the event to.
+     */
     private void apply(Entity entity) {
         if (Math.random() >= chance) return;
         if (!repeat && alreadyTriggered) return;
