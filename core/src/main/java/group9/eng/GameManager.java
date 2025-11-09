@@ -126,6 +126,7 @@ public class GameManager extends ApplicationAdapter {
             timeTracker = new TimeTracker(300f);
             scoreTracker = new ScoreTracker(); // Initialise score tracker
             eventCompletionTracker = new EventCompletionTracker(new int[]{1,1,1});
+            eventCompletionTracker.setEventFlag("hasTimetable", true);
 
             map = new Map(physicsWorld, viewport, eventDialogue, scoreTracker, eventCompletionTracker); // Needs to be initialised before EventManager if EventManager uses map dimensions
 

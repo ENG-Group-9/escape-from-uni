@@ -162,6 +162,8 @@ public class Map {
                     (float) object.getProperties().get("updateperiod"),
                     (float) object.getProperties().get("speedboost"),
                     (int) object.getProperties().get("eventType"),
+                    (String) object.getProperties().get("flag"),
+                    (Boolean) object.getProperties().get("setflag"),
                     dialogue,
                     scoreTracker,
                     eventCompletionTracker

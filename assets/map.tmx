@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="5">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="40" height="40" tilewidth="8" tileheight="8" infinite="0" nextlayerid="5" nextobjectid="6">
  <tileset firstgid="1" source="tileset.tsx"/>
  <layer id="2" name="floor" width="40" height="40">
   <data encoding="csv">
@@ -70,11 +70,11 @@
 1,2147483713,0,0,0,0,0,33,2147483681,0,0,0,0,0,0,0,0,0,0,0,0,0,65,1,2147483652,3,3,3,3,3,3,3,3,3,3,3,3,3,4,1,
 1,2147483713,0,0,0,0,0,65,2147483713,0,0,0,0,0,0,0,33,3,2147483650,0,0,0,1073741857,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,1073741858,1,1,1,1,1,1,1,1,
 1,2147483713,0,0,0,0,0,65,2147483713,0,0,0,0,0,0,0,65,1,2147483713,0,0,0,36,36,36,36,36,36,36,36,36,2147483683,1073741858,1,1,1,1,1,1,1,
-1,2147483713,0,0,0,0,0,65,2147483713,0,0,0,0,0,0,0,65,1,2147483713,0,0,0,67,67,67,67,67,67,67,67,67,2147483714,2147483683,1073741858,1,1,1,1,1,1,
-1,2147483682,2147483650,0,0,0,0,65,2147483652,3,3,3,3,3,3,3,4,1,2147483713,0,0,0,0,0,0,0,0,0,0,0,0,2147483716,2147483714,2147483683,1073741858,1,1,1,1,1,
-1,1,2147483713,0,0,0,0,65,1,1,1,1,1,1,1,1,1,1,2147483713,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483716,2147483714,2147483683,1073741858,1,1,1,1,
-1,1,2147483713,0,0,0,0,65,1,1,1,1,1,1,1,1,1,1,2147483713,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483716,2147483714,2147483683,1073741858,1,1,1,
-1,1,2147483713,0,0,0,0,65,1,1,1,3221225506,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,3221225505,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483716,2147483714,2147483683,1073741858,1,1,
+1,2147483713,0,0,0,0,0,65,2147483713,0,0,0,0,0,0,0,65,1,2147483713,0,0,0,67,67,67,67,67,6,67,67,67,2147483714,2147483683,1073741858,1,1,1,1,1,1,
+1,2147483682,2147483650,0,0,0,0,65,2147483652,3,3,3,3,3,3,3,4,1,2147483713,0,0,0,0,0,0,0,0,6,0,0,11,2147483716,2147483714,2147483683,1073741858,1,1,1,1,1,
+1,1,2147483713,0,0,0,0,65,1,1,1,1,1,1,1,1,1,1,2147483713,0,0,0,0,0,0,0,0,6,0,0,43,0,2147483716,2147483714,2147483683,1073741858,1,1,1,1,
+1,1,2147483713,0,0,0,0,65,1,1,1,1,1,1,1,1,1,1,2147483713,0,0,0,0,0,0,0,0,38,41,39,39,40,40,39,42,2147483683,1073741858,1,1,1,
+1,1,2147483713,0,0,0,0,65,1,1,1,3221225506,1073741827,1073741827,1073741827,1073741827,1073741827,1073741827,3221225505,0,0,0,0,0,0,0,0,70,71,72,73,74,74,74,74,2147483714,2147483683,1073741858,1,1,
 1,1,2147483713,0,0,0,0,65,1,1,3221225506,35,36,36,36,36,36,36,36,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483716,2147483714,2147483683,1073741858,1,
 1,1,2147483713,0,0,0,0,65,1,3758096418,35,66,67,67,67,67,67,67,67,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483716,2147483714,65,1,
 1,1,2147483652,3,3,3,3,4,1,2147483713,66,68,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2147483716,65,1,
@@ -93,42 +93,63 @@
   <object id="2" x="200" y="24">
    <properties>
     <property name="chance" type="float" value="1"/>
+    <property name="eventType" type="int" value="2"/>
+    <property name="flag" value=""/>
     <property name="message" value="Negative event!"/>
     <property name="points" type="int" value="-100"/>
     <property name="repeat" type="bool" value="false"/>
+    <property name="setflag" type="bool" value="false"/>
     <property name="speedboost" type="float" value="0"/>
     <property name="updateperiod" type="float" value="0"/>
     <property name="when" type="int" value="0"/>
-    <property name="eventType" type="int" value="2"/>
    </properties>
    <polygon points="0,0 104,0 104,56 0,56"/>
   </object>
   <object id="3" x="152" y="24">
    <properties>
     <property name="chance" type="float" value="1"/>
+    <property name="eventType" type="int" value="1"/>
+    <property name="flag" value=""/>
     <property name="message" value="You got a snack from the vending machine, it energises you!"/>
     <property name="points" type="int" value="100"/>
     <property name="repeat" type="bool" value="false"/>
+    <property name="setflag" type="bool" value="false"/>
     <property name="speedboost" type="float" value="0.5"/>
     <property name="updateperiod" type="float" value="0"/>
     <property name="when" type="int" value="0"/>
-    <property name="eventType" type="int" value="1"/>
    </properties>
    <polygon points="0,8 24,8 24,16 0,16"/>
   </object>
   <object id="4" x="-320" y="0">
    <properties>
     <property name="chance" type="float" value="0.2"/>
+    <property name="eventType" type="int" value="3"/>
+    <property name="flag" value="hasTimetable"/>
     <property name="message">Oh no! You've lost your timetable, the wind blew it away!
 Visit the Computer Science reception to get a new one.</property>
     <property name="points" type="int" value="-100"/>
-    <property name="repeat" type="bool" value="false"/>
+    <property name="repeat" type="bool" value="true"/>
+    <property name="setflag" type="bool" value="false"/>
     <property name="speedboost" type="float" value="0"/>
     <property name="updateperiod" type="float" value="5"/>
     <property name="when" type="int" value="1"/>
-    <property name="eventType" type="int" value="3"/>
    </properties>
    <polygon points="320,0 640,0 640,320 320,320"/>
+  </object>
+  <object id="5" x="232" y="216">
+   <properties>
+    <property name="chance" type="float" value="1"/>
+    <property name="eventType" type="int" value="1"/>
+    <property name="flag" value="hasTimetable"/>
+    <property name="message" value="You got a new timetable!"/>
+    <property name="points" type="int" value="100"/>
+    <property name="repeat" type="bool" value="true"/>
+    <property name="setflag" type="bool" value="true"/>
+    <property name="speedboost" type="float" value="0"/>
+    <property name="updateperiod" type="float" value="0"/>
+    <property name="when" type="int" value="0"/>
+   </properties>
+   <polygon points="0,8 24,8 24,16 0,16"/>
   </object>
  </objectgroup>
  <layer id="4" name="decor" width="40" height="40">

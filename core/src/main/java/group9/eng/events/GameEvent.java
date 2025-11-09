@@ -18,6 +18,8 @@ public class GameEvent {
     private double timer;
     private double updatePeriod;
     private double speedBoost;
+    private String flag;
+    private Boolean setFlag;
 
     private EventDialogue dialogue;
     private ScoreTracker scoreTracker;
@@ -32,6 +34,8 @@ public class GameEvent {
         double updatePeriod,
         double speedBoost,
         int eventType, // "0" hidden, "1" positive, "2" negative, "3" null/other
+        String flag,
+        Boolean setFlag,
         EventDialogue dialogue,
         ScoreTracker scoreTracker,
         EventCompletionTracker eventCompletionTracker
@@ -47,6 +51,9 @@ public class GameEvent {
         this.when = when;
         this.updatePeriod = updatePeriod;
         timer = updatePeriod;
+
+        this.flag = flag;
+        this.setFlag = setFlag;
 
         this.dialogue = dialogue;
         this.scoreTracker = scoreTracker;
@@ -79,6 +86,11 @@ public class GameEvent {
         if (Math.random() >= chance) return;
         if (alreadyTriggered) return;
         if (!repeat) alreadyTriggered = true;
+
+        if (!flag.isEmpty()) {
+            if (eventCompletionTracker.getEventFlag(flag) == setFlag) return;
+            eventCompletionTracker.setEventFlag(flag, setFlag);
+        }
 
         // Gdx.app.log("GameEvent", "Constructed event '" + message + "' type=" + eventType); debug
 

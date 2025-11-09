@@ -1,5 +1,8 @@
 package group9.eng.events;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -10,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 public class EventCompletionTracker{
 
     private Vector2[] eventCompletionData;
+    private Map<String, Boolean> eventFlags;
 
     /**
      * Constructor for EventCompletionTracker
@@ -22,6 +26,7 @@ public class EventCompletionTracker{
         for(int i = 0; i < numberOfEvents.length; i++) {
             eventCompletionData[i] = new Vector2(0, numberOfEvents[i]);
         }
+        eventFlags = new HashMap<String, Boolean>();
     }
 
     /**
@@ -48,5 +53,12 @@ public class EventCompletionTracker{
         eventCompletionData[index].x++;
     }
 
-    
+    public void setEventFlag(String name, Boolean value) {
+        eventFlags.put(name, value);
+    }
+
+    public Boolean getEventFlag(String name) {
+        if (name.isEmpty()) return true;
+        return eventFlags.getOrDefault(name, false);
+    }
 }
