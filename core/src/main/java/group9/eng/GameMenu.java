@@ -3,6 +3,7 @@ package group9.eng;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -11,8 +12,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
-import com.badlogic.gdx.math.Vector2;
-
 
 import group9.eng.events.EventCompletionTracker;
 
@@ -159,7 +158,7 @@ public class GameMenu {
         eventTrackerTable.setVisible(false); // Initially hidden
         stage.addActor(eventTrackerTable);
 
-        eventTrackerPlaceholderLabel = new Label("This will be used to track event types\n\nHidden Events 0/1\nPositive Events 0/1\nNegative Events 0/1", skin);
+        eventTrackerPlaceholderLabel = new Label("Event Types:\n\nHidden Events 0/1\nPositive Events 0/1\nNegative Events 0/1", skin);
         eventTrackerPlaceholderLabel.setFontScale(2f); // Adjust scale as needed
         eventTrackerPlaceholderLabel.setWrap(true); // Allow wrapping
 
@@ -184,11 +183,11 @@ public class GameMenu {
         // Update the text of the event tracker to match current data
         EventCompletionTracker eventCompletionTracker = mainGame.getEventCompletionTracker();
         List<Vector2> data = eventCompletionTracker.GetEventCompletionData();
-        String tempEventText = "This will be used to track event types\n" +
+        String eventText = "Event Types:\n" +
         "\nHidden Events " + (int)data.get(0).x + "/" + (int)data.get(0).y +
         "\nPositive Events " + (int)data.get(1).x  + "/" + (int)data.get(1).y +
         "\nNegative Events " + (int)data.get(2).x  + "/" + (int)data.get(2).y ;  
-        eventTrackerPlaceholderLabel.setText(tempEventText);
+        eventTrackerPlaceholderLabel.setText(eventText);
 
         // Reposition and display event tracker
         //repositionEventTracker(); // Update position based on current stage size

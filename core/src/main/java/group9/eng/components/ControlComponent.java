@@ -58,6 +58,9 @@ public class ControlComponent extends Component {
         if (multiplier > 1) {
             multiplier -= 0.0002;
             multiplier = Math.max(1, multiplier);
+        } else if (multiplier < 1) {
+            multiplier += 0.0002;
+            multiplier = Math.min(1, multiplier);
         }
     }
 
