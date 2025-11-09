@@ -1,6 +1,8 @@
 package group9.eng.events;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.math.Vector2;
@@ -12,7 +14,7 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class EventCompletionTracker{
 
-    private Vector2[] eventCompletionData;
+    private List<Vector2> eventCompletionData;
     private Map<String, Boolean> eventFlags;
 
     /**
@@ -21,11 +23,9 @@ public class EventCompletionTracker{
      * default is length of 3, index "0" being hidden, "1" positive, "2" negative
      * creates a vector2 array with each x value being set to 0
      */
-    public EventCompletionTracker(int[] numberOfEvents) {
-        eventCompletionData = new Vector2[numberOfEvents.length];
-        for(int i = 0; i < numberOfEvents.length; i++) {
-            eventCompletionData[i] = new Vector2(0, numberOfEvents[i]);
-        }
+    public EventCompletionTracker() {
+        eventCompletionData = new ArrayList<Vector2>();
+        for (int i = 0; i < 3; i++) eventCompletionData.add(new Vector2());
         eventFlags = new HashMap<String, Boolean>();
     }
 
@@ -33,7 +33,7 @@ public class EventCompletionTracker{
      * Returns the event's completion data
      * @return eventCompletionData
      */
-    public Vector2[] GetEventCompletionData() {
+    public List<Vector2> GetEventCompletionData() {
         return eventCompletionData;
     }
 
@@ -43,14 +43,23 @@ public class EventCompletionTracker{
      * @return the value for the specified event type
      */
     public int GetEventCompletionData(int index) {
-        return (int)eventCompletionData[index].x;
+        return (int)eventCompletionData.get(index).x;
     }
+
+    /**
+     * Increases the count of an event type by 1
+     * @param index the index of a specific event type
+     */
+    public void AddEventToComplete(int index) {
+        eventCompletionData.get(index).y++;
+    }
+
     /**
      * Increases the value of an event type by 1
      * @param index the index of a specific event type
      */
-    public void AddEventCompletionData(int index) {
-        eventCompletionData[index].x++;
+    public void CompleteEvent(int index) {
+        eventCompletionData.get(index).x++;
     }
 
     public void setEventFlag(String name, Boolean value) {

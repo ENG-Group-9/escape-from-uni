@@ -1,5 +1,7 @@
 package group9.eng.events;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 
 import com.badlogic.gdx.math.Vector2;
@@ -24,6 +26,7 @@ public class GameEvent {
     private EventDialogue dialogue;
     private ScoreTracker scoreTracker;
     private EventCompletionTracker eventCompletionTracker;
+    private int completionIndex;
 
     public GameEvent(
         String message,
@@ -60,6 +63,15 @@ public class GameEvent {
         this.eventType = eventType;
         // Gdx.app.log("GameEvent", "Constructed event '" + message + "' type=" + eventType); debugging stuf
         this.eventCompletionTracker = eventCompletionTracker;
+
+        // map eventType 3 (used by hidden events) to tracker index 0
+        if (eventType == 3) {
+            completionIndex = 0; // hidden
+        } else {
+            completionIndex = eventType; // 0,1,2 as usual
+        }
+
+        eventCompletionTracker.AddEventToComplete(completionIndex);
     }
 
     public void start(Entity entity) {
@@ -84,8 +96,7 @@ public class GameEvent {
 
     private void apply(Entity entity) {
         if (Math.random() >= chance) return;
-        if (alreadyTriggered) return;
-        if (!repeat) alreadyTriggered = true;
+        if (!repeat && alreadyTriggered) return;
 
         if (!flag.isEmpty()) {
             if (eventCompletionTracker.getEventFlag(flag) == setFlag) return;
@@ -99,21 +110,16 @@ public class GameEvent {
         if (speedBoost != 0) {
             ((ControlComponent) entity.getComponent(ControlComponent.class)).addSpeedMultiplier(speedBoost);
         }
-        // map eventType 3 (used by hidden events) to tracker index 0
-        int completionIndex;
-        if (eventType == 3) {
-            completionIndex = 0; // hidden
-        } else {
-            completionIndex = eventType; // 0,1,2 as usual
-        }
 
         // safety: bounds check in case of bad values
-        Vector2[] data = eventCompletionTracker.GetEventCompletionData();
-        if (completionIndex >= 0 && completionIndex < data.length) {
-            eventCompletionTracker.AddEventCompletionData(completionIndex);
+        List<Vector2> data = eventCompletionTracker.GetEventCompletionData();
+        if (!alreadyTriggered && completionIndex >= 0 && completionIndex < data.size()) {
+            eventCompletionTracker.CompleteEvent(completionIndex);
         }
         //else {
             // Gdx.app.log("GameEvent", "Skipped tracker increment (eventType == 3)"); debug
         //}
+
+        alreadyTriggered = true;
     }
 }

@@ -1,5 +1,7 @@
 package group9.eng;
 
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -181,11 +183,11 @@ public class GameMenu {
 
         // Update the text of the event tracker to match current data
         EventCompletionTracker eventCompletionTracker = mainGame.getEventCompletionTracker();
-        Vector2[] data = eventCompletionTracker.GetEventCompletionData();
+        List<Vector2> data = eventCompletionTracker.GetEventCompletionData();
         String tempEventText = "This will be used to track event types\n" +
-        "\nHidden Events " + (int)data[0].x + "/" + (int)data[0].y +
-        "\nPositive Events " + (int)data[1].x  + "/" + (int)data[1].y +
-        "\nNegative Events " + (int)data[2].x  + "/" + (int)data[2].y ;  
+        "\nHidden Events " + (int)data.get(0).x + "/" + (int)data.get(0).y +
+        "\nPositive Events " + (int)data.get(1).x  + "/" + (int)data.get(1).y +
+        "\nNegative Events " + (int)data.get(2).x  + "/" + (int)data.get(2).y ;  
         eventTrackerPlaceholderLabel.setText(tempEventText);
 
         // Reposition and display event tracker
