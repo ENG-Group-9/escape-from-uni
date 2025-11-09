@@ -19,13 +19,16 @@ public class EventCompletionTracker{
 
     /**
      * Constructor for EventCompletionTracker
-     * @param numberOfEvents an integer array containing how many of each type of event there is
-     * default is length of 3, index "0" being hidden, "1" positive, "2" negative
-     * creates a vector2 array with each x value being set to 0
      */
     public EventCompletionTracker() {
+        // eventCompletionData is a list of Vector2s.
+        // Their y value represents the number of events of that type in total,
+        // and their x value represents the number of events of that type that have been activated.
         eventCompletionData = new ArrayList<Vector2>();
         for (int i = 0; i < 3; i++) eventCompletionData.add(new Vector2());
+
+        // eventFlags contains flags that events can check to determine if they should occur.
+        // Each flag is identified by a string name.
         eventFlags = new HashMap<String, Boolean>();
     }
 
@@ -62,10 +65,20 @@ public class EventCompletionTracker{
         eventCompletionData.get(index).x++;
     }
 
+    /**
+     * Sets the value of an event flag.
+     * @param name the string name of the flag
+     * @param value the value the flag should be set to, true or false
+     */
     public void setEventFlag(String name, Boolean value) {
         eventFlags.put(name, value);
     }
 
+    /**
+     * Returns the value of an event flag.
+     * @param name the string name of the flag
+     * @return the Boolean value of the flag, or false if the flag doesn't exist
+     */
     public Boolean getEventFlag(String name) {
         if (name.isEmpty()) return true;
         return eventFlags.getOrDefault(name, false);
