@@ -30,10 +30,15 @@ import group9.eng.events.EventDialogue;
 import group9.eng.events.EventManager;
 
 /**
- * The main game class.
+ * The main game class, handling game state, rendering, and updates.
+ * It manages all major components like the physics world, entity manager,
+ * UI, and game logic trackers.
  */
 public class GameManager extends ApplicationAdapter {
 
+    /**
+     * Represents the different states of the game flow.
+     */
     private enum GameState {
         SPLASH, FADING_OUT, GAME, FADING_IN, GAME_OVER
     }
@@ -83,6 +88,10 @@ public class GameManager extends ApplicationAdapter {
     private SpriteBatch fadeBatch;
     private Texture blackPixel;
 
+    /**
+     * Called once when the application is created.
+     * Initialises splash screen components and fade transition elements.
+     */
     @Override
     public void create() {
         // Initialise Splash Screen components
@@ -200,6 +209,10 @@ public class GameManager extends ApplicationAdapter {
         }
     }
 
+    /**
+     * Called continuously by the framework. Manages main game loop,
+     * clearing the screen, updating state, drawing state, and drawing fade overlays.
+     */
     @Override
     public void render() {
         Gdx.gl.glClearColor(0f, 0f, 0f, 1);
@@ -210,6 +223,10 @@ public class GameManager extends ApplicationAdapter {
         drawFadeOverlay();
     }
 
+    /**
+     * Updates game logic based on the current game state.
+     * @param delta Time in seconds since the last frame.
+     */
     private void updateBasedOnState(float delta) {
         switch (currentState) {
             case SPLASH:
@@ -233,6 +250,9 @@ public class GameManager extends ApplicationAdapter {
         if (uiStage != null) uiStage.act(delta);
     }
 
+    /**
+     * Draws game visuals based on the current game state.
+     */
     private void drawBasedOnState() {
          switch (currentState) {
             case SPLASH:
@@ -254,6 +274,9 @@ public class GameManager extends ApplicationAdapter {
          }
     }
 
+    /**
+     * Handles logic for the splash screen state.
+     */
     private void updateSplash() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
              currentState = GameState.FADING_OUT;
@@ -263,6 +286,10 @@ public class GameManager extends ApplicationAdapter {
         splashCam.update();
     }
 
+    /**
+     * Handles the logic for fading out from the splash screen.
+     * @param delta Time in seconds since the last frame.
+     */
     private void updateFadeOut(float delta) {
         fadeTimer += delta;
         // Fade out the splash screen
@@ -274,6 +301,9 @@ public class GameManager extends ApplicationAdapter {
         splashCam.update();
     }
 
+     /**
+      * Draws the splash screen, applying fade alpha.
+      */
      private void drawSplash() {
          splashCam.update();
          splashBatch.setProjectionMatrix(splashCam.combined);
@@ -301,6 +331,11 @@ public class GameManager extends ApplicationAdapter {
      }
 
 
+    /**
+     * Handles all game logic updates, including fading in, pause checks,
+     * physics, entities, events, camera, and UI labels.
+     * @param delta Time in seconds since the last frame.
+     */
     private void updateGame(float delta) {
         if (currentState == GameState.FADING_IN) {
             fadeTimer += delta;
@@ -353,6 +388,9 @@ public class GameManager extends ApplicationAdapter {
 
     }
 
+    /**
+     * Draws all active game world elements.
+     */
     private void drawGame() {
         if (!gameInitialised) return;
 
@@ -368,7 +406,9 @@ public class GameManager extends ApplicationAdapter {
         if (entityManager != null && viewport != null) entityManager.draw(viewport);
     }
 
-    // Draws the black overlay during FADING_IN state
+    /**
+     * Draws the black fade overlay, used when fading into the game.
+     */
     private void drawFadeOverlay() {
         if (currentState == GameState.FADING_IN && fadeAlpha > 0.0f) {
             Gdx.gl.glEnable(GL20.GL_BLEND);
@@ -385,12 +425,18 @@ public class GameManager extends ApplicationAdapter {
             Gdx.gl.glDisable(GL20.GL_BLEND);        }
     }
 
+    /**
+     * Resumes the game if it is currently paused and in the GAME state.
+     */
     public void resumeGame() {
         if (isPaused && currentState == GameState.GAME) {
             togglePause();
         }
     }
 
+    /**
+     * Triggers the game over state, pausing the game and displaying the game over menu.
+     */
     private void triggerGameOver() {
         if (currentState != GameState.GAME_OVER) {
             currentState = GameState.GAME_OVER;
@@ -425,6 +471,10 @@ public class GameManager extends ApplicationAdapter {
         fadeAlpha = 1.0f; // Start from black
     }
 
+    /**
+     * Toggles the paused state of the game, showing/hiding the pause menu
+     * and pausing/resuming the game timer.
+     */
     private void togglePause() {
         // Allow pausing only when fully in the GAME state
         if (!gameInitialised || currentState != GameState.GAME) return;
@@ -443,6 +493,12 @@ public class GameManager extends ApplicationAdapter {
     }
 
 
+    /**
+     * Called when the application window is resized.
+     * Updates viewports for the splash screen, game world, and UI.
+     * @param width The new window width.
+     * @param height The new window height.
+     */
     @Override
     public void resize(int width, int height) {
         // Update splash camera viewport regardless of state
@@ -472,10 +528,19 @@ public class GameManager extends ApplicationAdapter {
     public EventDialogue getEventDialogue() {
         return eventDialogue;
     }
+
+    /**
+     * Provides a reference to the EventCompletionTracker.
+     * @return The game's EventCompletionTracker instance.
+     */
     public EventCompletionTracker getEventCompletionTracker() {
         return eventCompletionTracker;
     }
 
+    /**
+     * Called when the application is closing.
+     * Disposes of all managed resources to prevent memory leaks.
+     */
     @Override
     public void dispose() {
         if (splashBatch != null) splashBatch.dispose();
