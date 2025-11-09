@@ -90,13 +90,13 @@
 </data>
  </layer>
  <objectgroup id="3" name="eventareas">
-  <object id="2" x="200" y="24">
+ <object id="2" x="200" y="24">
    <properties>
     <property name="chance" type="float" value="1"/>
-    <property name="message" value="Negative event!"/>
+    <property name="message" value="You tripped and hurt your ankle! You are slowed down."/>
     <property name="points" type="int" value="-100"/>
     <property name="repeat" type="bool" value="false"/>
-    <property name="speedboost" type="float" value="0"/>
+    <property name="speedboost" type="float" value="-0.5"/>
     <property name="updateperiod" type="float" value="0"/>
     <property name="when" type="int" value="0"/>
     <property name="eventType" type="int" value="2"/>
