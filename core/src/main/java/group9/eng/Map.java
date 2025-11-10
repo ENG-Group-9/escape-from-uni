@@ -39,7 +39,7 @@ public class Map {
         this.physicsWorld = physicsWorld;
         this.viewport = viewport;
 
-        mapData = new TmxMapLoader().load("Map.tmx");
+        mapData = new TmxMapLoader().load("map.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(mapData, 1f);
 
         MapProperties mapProperties = mapData.getProperties();
